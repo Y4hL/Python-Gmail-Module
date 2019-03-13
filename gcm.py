@@ -46,7 +46,7 @@ def get_email_body(con, mail_id):
         raise TypeError("mail_id should be a bytes object")
 
     if not mail_id in mail_id_list:
-        raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
+        raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
 
     _, mail_message = con.fetch(mail_id, "(RFC822)")
     raw = email.message_from_bytes(mail_message[0][1])
@@ -68,7 +68,7 @@ def get_mail(con, mail_id):
 
     mail_id_list = get_mail_ids(con)
     if not mail_id in mail_id_list:
-        raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
+        raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
     _, mail_message = con.fetch(mail_id, "(RFC822)")
     str_message = mail_message[0][1].decode("utf-8")
     email_message = email.message_from_string(str_message)
@@ -128,7 +128,7 @@ def attachment_state(con, mail_id):
         raise TypeError("mail_id should be a bytes object")
     
     if not mail_id in mail_id_list:
-        raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
+        raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
     _, mail_message = con.fetch(mail_id, "(RFC822)")
     raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
     for part in raw.walk():
@@ -166,7 +166,7 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
         if type(file_location) != str:
             raise ValueError("file_location should be a string or left empty")
         if not os.path.isfile(file_location):
-            raise Exception("File '{}' does not exist, remember to enter the path")
+            raise ValueError("File '{}' does not exist, remember to enter the path")
         filename = os.path.basename(file_location)
         attachment = open(file_location, "rb")
         part = MIMEBase('application', 'octet-stream')
@@ -194,7 +194,7 @@ def get_attachment(con, mail_id, save_dir):
         raise TypeError("mail_id should be a bytes object")
     
     if not mail_id in mail_id_list:
-        raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
+        raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
     _, mail_message = con.fetch(mail_id, "(RFC822)")
     raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
     for part in raw.walk():
