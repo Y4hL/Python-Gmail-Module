@@ -128,7 +128,7 @@ def attachment_state(con, mail_id):
         raise ValueError("mail_id should be a bytes object")
     
     if not mail_id in mail_id_list:
-        raise Exception("mail id '{}' does not correspond to a email in {}".format(mail_id, inbox))
+        raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
     _, mail_message = con.fetch(mail_id, "(RFC822)")
     raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
     for part in raw.walk():
