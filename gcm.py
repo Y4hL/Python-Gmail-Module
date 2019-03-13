@@ -43,7 +43,7 @@ def get_email_body(con, mail_id):
     mail_id_list = get_mail_ids(con)
 
     if type(mail_id) != bytes:
-        raise ValueError("mail_id should be a bytes object")
+        raise TypeError("mail_id should be a bytes object")
 
     if not mail_id in mail_id_list:
         raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
@@ -64,7 +64,7 @@ def get_mail(con, mail_id):
     # Same as list_mails function, but only returns it for one given mail
 
     if type(mail_id) != bytes:
-        raise ValueError("mail_id should be a bytes object")
+        raise TypeError("mail_id should be a bytes object")
 
     mail_id_list = get_mail_ids(con)
     if not mail_id in mail_id_list:
@@ -125,7 +125,7 @@ def attachment_state(con, mail_id):
     mail_id_list = get_mail_ids(con)
     
     if type(mail_id) != bytes:
-        raise ValueError("mail_id should be a bytes object")
+        raise TypeError("mail_id should be a bytes object")
     
     if not mail_id in mail_id_list:
         raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
@@ -145,15 +145,15 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
     # Returns True if email was sent successfully
     
     if type(email) != str:
-        raise ValueError("email should be a string")
+        raise TypeError("email should be a string")
     if type(password) != str:
-        raise ValueError("password should be a string")
+        raise TypeError("password should be a string")
     if type(send_to_email) != str:
-        raise ValueError("recipiant should be a string")
+        raise TypeError("recipiant should be a string")
     if type(subject) != str:
-        raise ValueError("subject should be a string")
+        raise TypeError("subject should be a string")
     if type(message) != str:
-        raise ValueError("message should be a string")
+        raise TypeError("message should be a string")
 
     msg = MIMEMultipart()
     msg['From'] = email
@@ -191,7 +191,7 @@ def get_attachment(con, mail_id, save_dir):
     mail_id_list = get_mail_ids(con)
     
     if type(mail_id) != bytes:
-        raise ValueError("mail_id should be a bytes object")
+        raise TypeError("mail_id should be a bytes object")
     
     if not mail_id in mail_id_list:
         raise Exception("mail id '{}' does not correspond to a email".format(mail_id))
