@@ -1,19 +1,12 @@
 # gcm
 # gmail client module
 
-# Imports for sending mails
-
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
-import os.path
-
-# Imports for reading mails
-
+# Imports
 import base64
-import email, imaplib, os, math, time
+import email
+import imaplib
+import os
+import smtplib
 
 
 def auth(user, password, imap_url="imap.gmail.com", inbox="INBOX"): # Google Server Authentication
@@ -31,8 +24,8 @@ def auth(user, password, imap_url="imap.gmail.com", inbox="INBOX"): # Google Ser
 
 def get_mail_ids(con):
     # Gets a list of all mail ids in a inbox
-
     _, get_latest_data = con.search(None, "ALL")
+
     mail_id_str = get_latest_data[0] # get_latest_data is a list
     return mail_id_str.split(b' ')
 
@@ -155,12 +148,12 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
     if type(message) != str:
         raise TypeError("message should be a string")
 
-    msg = MIMEMultipart()
+    msg = email.mime.multipart.MIMEMultipart()
     msg['From'] = email
     msg['To'] = send_to_email
     msg['Subject'] = subject
 
-    msg.attach(MIMEText(message, 'plain'))
+    msg.attach(email.mime.text.MIMEText(message, 'plain'))
 
     if not file_location==False:
         if type(file_location) != str:
@@ -169,9 +162,9 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
             raise ValueError("File '{}' does not exist, remember to enter the path")
         filename = os.path.basename(file_location)
         attachment = open(file_location, "rb")
-        part = MIMEBase('application', 'octet-stream')
+        part = email.MIMEBase('application', 'octet-stream')
         part.set_payload((attachment).read())
-        encoders.encode_base64(part)
+        email.encoders.encode_base64(part)
         part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
         msg.attach(part)
@@ -180,7 +173,7 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
     server.starttls()
     server.login(email, password)
     text = msg.as_string()
-    server.sendmail(email.decode(), send_to_email, text)
+    server.sendmail(email, send_to_email, text)
     server.quit()
     return True
 
@@ -210,6 +203,7 @@ def get_attachment(con, mail_id, save_dir):
                 f.write(part.get_payload(decode=True))
             return True
         return False
+
 
 def delete_email(con, mail_id):
     mail_id_list = get_mail_ids(con)
