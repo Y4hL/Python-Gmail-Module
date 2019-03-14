@@ -210,3 +210,21 @@ def get_attachment(con, mail_id, save_dir):
                 f.write(part.get_payload(decode=True))
             return True
         return False
+
+def delete_email(con, mail_id):
+    mail_id_list = get_mail_ids(con)
+
+    if type(mail_id) !=  bytes:
+        raise TypeError("mail_id should be a bytes object")
+
+    if not mail_id in mail_id_list:
+        raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+
+    con.store(mail_id, '+FLAGS', '\\Deleted')
+
+    return
+
+
+def clear_deleted(con):
+    con.expunge()
+    return
