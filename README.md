@@ -37,4 +37,10 @@ all_emails = list_mails(con)
 for email in all_emails:
     print(email)
 
+# Deletes first email
+delete_email(con, list_of_mail_ids[0])
+
+# Clears trash bin
+clear_deleted(con)
+
 ```
