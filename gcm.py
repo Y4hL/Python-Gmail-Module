@@ -201,7 +201,7 @@ def get_attachment(con, mail_id, save_dir):
             filePath = os.path.join(save_dir, fileName)
             with open(filePath, "wb") as f:
                 f.write(part.get_payload(decode=True))
-            return True
+            return filePath
         return False
 
 
