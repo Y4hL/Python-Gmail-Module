@@ -137,6 +137,12 @@ def attachment_state(con, mail_id):
 def send_gmail(email, password, send_to_email, subject, message, file_location=False):
     # Returns True if email was sent successfully
     
+    # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
+    # OR 
+    # RECOMMENDED:
+    #if you have 2fa, create a app password and use it instead of the real password
+    # at: https://myaccount.google.com/apppasswords
+    
     if type(email) != str:
         raise TypeError("email should be a string")
     if type(password) != str:
@@ -168,14 +174,14 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
         part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
         msg.attach(part)
-
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(email, password)
-    text = msg.as_string()
-    server.sendmail(email, send_to_email, text)
-    server.quit()
-    return True
+    
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
+        smtp.login(email, password)
+        text = msg.as_string()
+        smtp.sendmail(email, send_to_email, text)
+        smtp.quit()
+        return True
 
 
 def get_attachment(con, mail_id, save_dir):
