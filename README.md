@@ -4,7 +4,7 @@ Easily Send, Read and Download attachments from Gmail with Python
 # Example
 ```
 # Import the module
-from gcm import *
+from PGM import *
 
 # Authenticate a connection
 con = auth("email", "password")
