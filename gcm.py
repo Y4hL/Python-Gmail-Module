@@ -1,5 +1,5 @@
-# gcm
-# gmail client module
+# PGM
+# Python Gmail Module
 
 # Imports
 import base64
