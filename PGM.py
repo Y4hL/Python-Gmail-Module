@@ -3,11 +3,14 @@
 
 # Imports
 import base64
-import email
 import imaplib
+import email
 import os
 import smtplib
-
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
 
 def auth(user, password, imap_url="imap.gmail.com", inbox="INBOX"): # Google Server Authentication
     # returns a connection
@@ -134,7 +137,7 @@ def attachment_state(con, mail_id):
     return False
 
 
-def send_gmail(email, password, send_to_email, subject, message, file_location=False):
+def send_gmail(user_email, password, send_to_email, subject, message, file_location=False):
     # Returns True if email was sent successfully
     
     # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
@@ -143,7 +146,7 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
     #if you have 2fa, create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
     
-    if type(email) != str:
+    if type(user_email) != str:
         raise TypeError("email should be a string")
     if type(password) != str:
         raise TypeError("password should be a string")
@@ -154,12 +157,12 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
     if type(message) != str:
         raise TypeError("message should be a string")
 
-    msg = email.mime.multipart.MIMEMultipart()
-    msg['From'] = email
+    msg = MIMEMultipart()
+    msg['From'] = user_email
     msg['To'] = send_to_email
     msg['Subject'] = subject
 
-    msg.attach(email.mime.text.MIMEText(message, 'plain'))
+    msg.attach(MIMEText(message, 'plain'))
 
     if not file_location==False:
         if type(file_location) != str:
@@ -168,21 +171,21 @@ def send_gmail(email, password, send_to_email, subject, message, file_location=F
             raise ValueError("File '{}' does not exist, remember to enter the path")
         filename = os.path.basename(file_location)
         attachment = open(file_location, "rb")
-        part = email.MIMEBase('application', 'octet-stream')
+        part = MIMEBase('application', 'octet-stream')
         part.set_payload((attachment).read())
-        email.encoders.encode_base64(part)
+        encoders.encode_base64(part)
         part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
         msg.attach(part)
     
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
-        smtp.login(email, password)
+        smtp.login(user_email, password)
         text = msg.as_string()
-        smtp.sendmail(email, send_to_email, text)
+        smtp.sendmail(user_email, send_to_email, text)
         smtp.quit()
         return True
-
+    return False
 
 def get_attachment(con, mail_id, save_dir):
     # Returns True or False, depending if a attachment was downloaded
