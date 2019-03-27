@@ -31,6 +31,7 @@ class read():
 
     def change_inbox(self, INBOX):
         self.con.select(INBOX)
+        return
 
 
     def get_mail_ids(self):
@@ -223,19 +224,24 @@ def send_gmail(user_email, password, send_to_email, subject, message, file_locat
 
     msg.attach(MIMEText(message, 'plain'))
 
-    if not file_location==False:
-        if type(file_location) != str:
-            raise ValueError("file_location should be a string or left empty")
-        if not os.path.isfile(file_location):
-            raise ValueError("File '{}' does not exist, remember to enter the path")
-        filename = os.path.basename(file_location)
-        attachment = open(file_location, "rb")
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload((attachment).read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+    if not file_location == False:
+        file_locations = []
+        if type(file_location) == str:
+            file_locations.append(file_location)
+        if type(file_location) == list:
+            file_locations = file_location
+        for files in file_locations:
+            files = str(files)
+            if not os.path.isfile(files):
+                raise ValueError("File '{files}' does not exist, remember to enter the path")
+            filename = os.path.basename(file_location)
+            attachment = open(file_location, "rb")
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload((attachment).read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
-        msg.attach(part)
+            msg.attach(part)
     
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
