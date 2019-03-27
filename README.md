@@ -29,6 +29,10 @@ print("The amount of mails is " + amount_of_mails)
 body_of_email = MyMail.get_email_body(list_of_mail_ids[0])
 print(body_of_email)
 
+# Gets raw email
+raw_email = MyMail.get_raw(list_of_mail_ids[0])
+print(raw_email)
+
 # Gets Subject, Sender, received date, recipiant and body
 # of the second email in the list and prints it
 second_email = MyMail.get_mail(list_of_mail_ids[1])

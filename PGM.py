@@ -52,11 +52,8 @@ class read():
         if type(mail_id) != bytes:
             raise TypeError("mail_id should be a bytes object")
 
-        print(mail_id)
-        print(mail_id_list)
-
         if not mail_id in mail_id_list:
-            raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+            raise ValueError("invalid mail_id")
 
         _, mail_message = self.con.fetch(mail_id, "(RFC822)")
         raw = email.message_from_bytes(mail_message[0][1])
@@ -69,6 +66,18 @@ class read():
                     pass
                 return body
 
+    def get_raw(self, mail_id):
+        # Gets raw email
+
+        if type(mail_id) != bytes:
+            raise TypeError("mail_id should be a bytes object")
+
+        mail_id_list = self.get_mail_ids()
+        if not mail_id in mail_id_list:
+            raise ValueError("Invalid mail_id")
+        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
+        return mail_message
+
 
     def get_mail(self, mail_id):
         # Same as list_mails function, but only returns it for one given mail
@@ -78,7 +87,7 @@ class read():
 
         mail_id_list = self.get_mail_ids()
         if not mail_id in mail_id_list:
-            raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+            raise ValueError("Invalid mail_id")
         _, mail_message = self.con.fetch(mail_id, "(RFC822)")
         str_message = mail_message[0][1].decode("utf-8")
         email_message = email.message_from_string(str_message)
@@ -138,7 +147,7 @@ class read():
             raise TypeError("mail_id should be a bytes object")
         
         if not mail_id in mail_id_list:
-            raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+            raise ValueError("Invalid mail_id")
         _, mail_message = self.con.fetch(mail_id, "(RFC822)")
         raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
         for part in raw.walk():
@@ -159,7 +168,7 @@ class read():
             raise TypeError("mail_id should be a bytes object")
         
         if not mail_id in mail_id_list:
-            raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+            raise ValueError("Invalid mail_id")
         _, mail_message = self.con.fetch(mail_id, "(RFC822)")
         raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
         for part in raw.walk():
@@ -184,7 +193,7 @@ class read():
             raise TypeError("mail_id should be a bytes object")
 
         if not mail_id in mail_id_list:
-            raise ValueError("mail id '{}' does not correspond to a email".format(mail_id))
+            raise ValueError("Invalid mail_id")
         if self.imap_url == "imap.gmail.com":
             self.con.store(mail_id, '+X-GM-LABELS', '\\Trash') # Moved email to trash
         else:
@@ -242,7 +251,7 @@ def send_gmail(user_email, password, send_to_email, subject, message, file_locat
             part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
             msg.attach(part)
-    
+
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
         smtp.login(user_email, password)
