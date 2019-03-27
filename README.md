@@ -3,7 +3,7 @@ Easily Send, Read and Download attachments from Gmail with Python
 
 # Setup  
   
-SMTP login method is not on by default.  
+SMTP login method is not enabled by default.  
 Turn it on [here](https://myaccount.google.com/lesssecureapps)  
   
 Alternatively if you have 2fa enabled,  
