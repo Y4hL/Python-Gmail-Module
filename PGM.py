@@ -108,6 +108,7 @@ class read():
             }
         return message
 
+
     def list_mails(self):
         # returns a list of dictionarys ( each dictinary is a mail )
 
@@ -159,6 +160,7 @@ class read():
             return fileName
         return False
 
+
     def get_attachment(self, mail_id, save_dir):
         # Returns True or False, depending if a attachment was downloaded
         
@@ -206,13 +208,15 @@ class read():
         self.con.logout()
         return
 
+
 def send_gmail(user_email, password, send_to_email, subject, message, file_location=False):
     # Returns True if email was sent successfully
     
+    # Without 2FA:
     # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
-    # OR 
-    # RECOMMENDED:
-    #if you have 2fa, create a app password and use it instead of the real password
+
+    # With 2FA:
+    # create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
     
     if type(user_email) != str:
