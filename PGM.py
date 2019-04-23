@@ -98,15 +98,7 @@ class read():
 
         body = self.get_email_body(mail_id) # Gets Body
 
-        message = {
-                "Id": mail_id,
-                "Subject": email_subject,
-                "From": email_sender,
-                "Date": date,
-                "To": recipiant,
-                "Body": body
-            }
-        return message
+        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])) # Combines values into dict
 
 
     def list_mails(self):
@@ -127,14 +119,8 @@ class read():
 
             body = self.get_email_body(mail_id) # Gets Body
 
-            messages.append({
-                "id": mail_id,
-                "subject": email_subject,
-                "from": email_sender,
-                "date": date,
-                "to": recipiant,
-                "body": body
-            })
+            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])))
+        
         return messages
 
 
