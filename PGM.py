@@ -109,13 +109,13 @@ class read():
         str_message = mail_message[0][1].decode("utf-8")
         email_message = email.message_from_string(str_message)
         email_subject = email_message['Subject'] # Gets Email Subject
-        email_sender = email_message['From'] # Gets Email Sender
+        email_author = email_message['From'] # Gets Email Author
         date = email_message['Date'] # Gets Date Email was sent
         recipiant = email_message['To'] # Gets Email Recipiant
 
         body = self.get_mail_body(mail_id) # Gets Body
 
-        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])) # Combines values into dict
+        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_author, date, recipiant, body])) # Combines values into dict
 
 
     def list_mails(self):
@@ -130,13 +130,13 @@ class read():
             str_message = mail_message[0][1].decode("utf-8")
             email_message = email.message_from_string(str_message)
             email_subject = email_message['Subject'] # Gets Email Subject
-            email_sender = email_message['From'] # Gets Email Sender
+            email_author = email_message['From'] # Gets Email Author
             date = email_message['Date'] # Gets Date Email was sent
             recipiant = email_message['To'] # Gets Email Recipiant
 
             body = self.get_mail_body(mail_id) # Gets Body
 
-            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])))
+            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_author, date, recipiant, body])))
         
         return messages
 

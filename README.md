@@ -42,7 +42,7 @@ print(body_of_email)
 raw_email = MyMail.get_raw(list_of_mail_ids[0])
 print(raw_email)
 ```
-### Get Subject, Sender, received date, recipiant and body of the second email in the list and print it
+### Get Subject, Author, received date, recipiant and body of the second email in the list and print it
 ```
 second_email = MyMail.get_mail(list_of_mail_ids[1])
 print(second_email)
