@@ -44,7 +44,24 @@ class read():
         return mail_id_str.split(b' ') # returns list of mail ids
 
 
-    def get_email_body(self, mail_id):
+    def get_mail_date(self, mail_id):
+
+        email_message = self.get_raw(mail_id)
+        return email_message['Date'] # Returns Email Date
+
+
+    def get_mail_subject(self, mail_id):
+
+        email_message = self.get_raw(mail_id)
+        return email_message['Subject'] # Returns Email Subject
+
+
+    def get_mail_author(self, mail_id):
+
+        email_message = self.get_raw(mail_id)
+        return email_message['From'] # Returns Email Author
+
+    def get_mail_body(self, mail_id):
         # Gets the body of a given mail_id
 
         mail_id_list = self.get_mail_ids()
@@ -96,7 +113,7 @@ class read():
         date = email_message['Date'] # Gets Date Email was sent
         recipiant = email_message['To'] # Gets Email Recipiant
 
-        body = self.get_email_body(mail_id) # Gets Body
+        body = self.get_mail_body(mail_id) # Gets Body
 
         return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])) # Combines values into dict
 
@@ -117,7 +134,7 @@ class read():
             date = email_message['Date'] # Gets Date Email was sent
             recipiant = email_message['To'] # Gets Email Recipiant
 
-            body = self.get_email_body(mail_id) # Gets Body
+            body = self.get_mail_body(mail_id) # Gets Body
 
             messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_sender, date, recipiant, body])))
         
@@ -174,7 +191,7 @@ class read():
             return False
 
 
-    def delete_email(self, mail_id):
+    def delete_mail(self, mail_id):
         mail_id_list = self.get_mail_ids()
 
         if type(mail_id) !=  bytes:

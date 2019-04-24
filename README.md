@@ -34,7 +34,7 @@ print("The amount of mails is " + amount_of_mails)
 ```
 ### Get body of first email in the list and prints it
 ```
-body_of_email = MyMail.get_email_body(list_of_mail_ids[0])
+body_of_email = MyMail.get_mail_body(list_of_mail_ids[0])
 print(body_of_email)
 ```
 ### Get raw email
@@ -65,7 +65,7 @@ for email in all_emails:
 ```
 ### Delete first email
 ```
-MyMail.delete_email(list_of_mail_ids[0])
+MyMail.delete_mail(list_of_mail_ids[0])
 ```
 ### Clear trash bin
 ```
