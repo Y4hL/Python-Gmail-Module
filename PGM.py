@@ -61,6 +61,7 @@ class read():
         email_message = self.get_raw(mail_id)
         return email_message['From'] # Returns Email Author
 
+
     def get_mail_body(self, mail_id):
         # Gets the body of a given mail_id
 
@@ -82,6 +83,7 @@ class read():
                 except Exception:
                     pass
                 return body
+
 
     def get_raw(self, mail_id):
         # Gets raw email
@@ -212,7 +214,7 @@ class read():
         return
 
 
-def send_gmail(user_email, password, send_to_email, subject, message, file_location=False):
+def send_gmail(user_email, password, recipiant, subject, message, file_location=False):
     # Returns True if email was sent successfully
     
     # Without 2FA:
@@ -226,7 +228,7 @@ def send_gmail(user_email, password, send_to_email, subject, message, file_locat
         raise TypeError("email should be a string")
     if type(password) != str:
         raise TypeError("password should be a string")
-    if type(send_to_email) != str:
+    if type(recipiant) != str:
         raise TypeError("recipiant should be a string")
     if type(subject) != str:
         raise TypeError("subject should be a string")
@@ -235,7 +237,7 @@ def send_gmail(user_email, password, send_to_email, subject, message, file_locat
 
     msg = MIMEMultipart()
     msg['From'] = user_email
-    msg['To'] = send_to_email
+    msg['To'] = recipiant
     msg['Subject'] = subject
 
     msg.attach(MIMEText(message, 'plain'))
@@ -263,7 +265,7 @@ def send_gmail(user_email, password, send_to_email, subject, message, file_locat
         smtp.starttls()
         smtp.login(user_email, password)
         text = msg.as_string()
-        smtp.sendmail(user_email, send_to_email, text)
+        smtp.sendmail(user_email, recipiant, text)
         smtp.quit()
         return True
     return False
