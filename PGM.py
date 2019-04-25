@@ -36,175 +36,162 @@ class read():
 
     def get_mail_ids(self):
         # Gets a list of all mail ids in a inbox
-        _, get_latest_data = self.con.search(None, "ALL")
+        _, LATEST_DATA = self.con.search(None, "ALL")
 
-        mail_id_str = get_latest_data[0] # get_latest_data is a list
-        if mail_id_str == b'': # checks if there are no mails
+        MAIL_ID_str = LATEST_DATA[0] # LATEST DATA is a list
+        if MAIL_ID_str == b'': # checks if there are no mails
             return [] # returns empty list
-        return mail_id_str.split(b' ') # returns list of mail ids
+        return MAIL_ID_str.split(b' ') # returns list of mail ids
 
 
-    def get_mail_date(self, mail_id):
+    def mail_check(self, MAIL_ID):
 
-        email_message = self.get_raw(mail_id)
-        return email_message['Date'] # Returns Email Date
+        if type(MAIL_ID) != bytes:
+            raise TypeError("MAIL_ID should be a bytes object")
 
+        MAIL_IDS = self.get_mail_ids()
+        if not MAIL_ID in MAIL_IDS:
+            raise ValueError("Invalid MAIL_ID")
+        return
 
-    def get_mail_subject(self, mail_id):
+    def get_mail_date(self, MAIL_ID):
 
-        email_message = self.get_raw(mail_id)
-        return email_message['Subject'] # Returns Email Subject
-
-
-    def get_mail_author(self, mail_id):
-
-        email_message = self.get_raw(mail_id)
-        return email_message['From'] # Returns Email Author
+        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        return MAIL_MESSAGE['Date'] # Returns Email Date
 
 
-    def get_mail_body(self, mail_id):
-        # Gets the body of a given mail_id
+    def get_mail_subject(self, MAIL_ID):
 
-        mail_id_list = self.get_mail_ids()
+        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        return MAIL_MESSAGE['Subject'] # Returns Email Subject
 
-        if type(mail_id) != bytes:
-            raise TypeError("mail_id should be a bytes object")
 
-        if not mail_id in mail_id_list:
-            raise ValueError("invalid mail_id")
+    def get_mail_author(self, MAIL_ID):
 
-        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-        raw = email.message_from_bytes(mail_message[0][1])
-        for part in raw.walk():
-            if part.get_content_type() == 'text/plain':
-                body = part.get_payload()
+        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        return MAIL_MESSAGE['From'] # Returns Email Author
+
+
+    def get_mail_body_from_raw(self, MAIL_MESSAGE):
+        
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
+        for PART in RAW.walk():
+            if PART.get_content_type() == 'text/plain':
+                BODY = PART.get_payload()
                 try:
-                    body = base64.b64decode(body).decode()
+                    BODY = base64.b64decode(BODY).decode()
                 except Exception:
                     pass
-                return body
+                return BODY
 
 
-    def get_raw(self, mail_id):
+    def get_mail_body(self, MAIL_ID):
+        # Gets the body of a given MAIL_ID
+
+        self.mail_check(MAIL_ID)
+
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
+        for PART in RAW.walk():
+            if PART.get_content_type() == 'text/plain':
+                BODY = PART.get_payload()
+                try:
+                    BODY = base64.b64decode(BODY).decode()
+                except Exception:
+                    pass
+                return BODY
+
+
+    def get_raw(self, MAIL_ID):
         # Gets raw email
 
-        if type(mail_id) != bytes:
-            raise TypeError("mail_id should be a bytes object")
+        self.mail_check(MAIL_ID)
 
-        mail_id_list = self.get_mail_ids()
-        if not mail_id in mail_id_list:
-            raise ValueError("Invalid mail_id")
-        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-        return mail_message
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        return MAIL_MESSAGE
 
 
-    def get_mail(self, mail_id):
+    def get_mail(self, MAIL_ID):
         # Same as list_mails function, but only returns it for one given mail
 
-        if type(mail_id) != bytes:
-            raise TypeError("mail_id should be a bytes object")
+        self.mail_check(MAIL_ID)
+        
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
 
-        mail_id_list = self.get_mail_ids()
-        if not mail_id in mail_id_list:
-            raise ValueError("Invalid mail_id")
-        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-        str_message = mail_message[0][1].decode("utf-8")
-        email_message = email.message_from_string(str_message)
-        email_subject = email_message['Subject'] # Gets Email Subject
-        email_author = email_message['From'] # Gets Email Author
-        date = email_message['Date'] # Gets Date Email was sent
-        recipiant = email_message['To'] # Gets Email Recipiant
+        BODY = self.get_mail_body_from_raw(EMAIL_MESSAGE) # Gets Email Body
 
-        body = self.get_mail_body(mail_id) # Gets Body
-
-        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_author, date, recipiant, body])) # Combines values into dict
+        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])) # Combines values into dict
 
 
     def list_mails(self):
-        # returns a list of dictionarys ( each dictinary is a mail )
+        # returns a list of dictionaries ( each dictionary is a mail )
 
-        mail_id_list = self.get_mail_ids()
+        MAIL_ID_LIST = self.get_mail_ids()
 
         messages = []
 
-        for mail_id in mail_id_list:
-            _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-            str_message = mail_message[0][1].decode("utf-8")
-            email_message = email.message_from_string(str_message)
-            email_subject = email_message['Subject'] # Gets Email Subject
-            email_author = email_message['From'] # Gets Email Author
-            date = email_message['Date'] # Gets Date Email was sent
-            recipiant = email_message['To'] # Gets Email Recipiant
+        for MAIL_ID in MAIL_ID_LIST:
+            _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+            STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
 
-            body = self.get_mail_body(mail_id) # Gets Body
+            BODY = self.get_mail_body_from_raw(EMAIL_MESSAGE) # Gets Email Body
 
-            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [mail_id, email_subject, email_author, date, recipiant, body])))
+            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])))
         
         return messages
 
 
-    def attachment_state(self, mail_id):
+    def attachment_state(self, MAIL_ID):
         # Returns False if no attachment is found
         # or the file name if one is found
 
-        mail_id_list = self.get_mail_ids()
-        
-        if type(mail_id) != bytes:
-            raise TypeError("mail_id should be a bytes object")
-        
-        if not mail_id in mail_id_list:
-            raise ValueError("Invalid mail_id")
-        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-        raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
-        for part in raw.walk():
-            if part.get_content_maintype() == "multipype":
+        self.mail_check(MAIL_ID)
+
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        for PART in RAW.walk():
+            if PART.get_content_maintype() == "multipype":
                 continue
-            if part.get("Content-Disposition") is None:
+            if PART.get("Content-Disposition") is None:
                 continue
-            fileName = part.get_filename() # Gets download file name
-            return fileName
+            FILE_NAME = PART.get_filename() # Gets download file name
+            return FILE_NAME
         return False
 
 
-    def get_attachment(self, mail_id, save_dir):
+    def get_attachment(self, MAIL_ID, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
         
-        mail_id_list = self.get_mail_ids()
-        
-        if type(mail_id) != bytes:
-            raise TypeError("mail_id should be a bytes object")
-        
-        if not mail_id in mail_id_list:
-            raise ValueError("Invalid mail_id")
-        _, mail_message = self.con.fetch(mail_id, "(RFC822)")
-        raw = email.message_from_bytes(mail_message[0][1])  # gets email from list
-        for part in raw.walk():
-            if part.get_content_maintype() == "multipype":
+        self.mail_check(MAIL_ID)
+
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        for PART in RAW.walk():
+            if PART.get_content_maintype() == "multipype":
                 continue
-            if part.get("Content-Disposition") is None:
+            if PART.get("Content-Disposition") is None:
                 continue
-            fileName = part.get_filename() # Gets download file name
+            FILE_NAME = PART.get_filename() # Gets download file name
 
             if bool(fileName):
-                filePath = os.path.join(save_dir, fileName)
+                FILE_PATH = os.path.join(SAVE_PATH, FILENAME)
                 with open(filePath, "wb") as f:
                     f.write(part.get_payload(decode=True))
-                return filePath
+                return FILE_PATH
             return False
 
 
-    def delete_mail(self, mail_id):
-        mail_id_list = self.get_mail_ids()
+    def delete_mail(self, MAIL_ID):
+        
+        self.mail_check(MAIL_ID)
 
-        if type(mail_id) !=  bytes:
-            raise TypeError("mail_id should be a bytes object")
-
-        if not mail_id in mail_id_list:
-            raise ValueError("Invalid mail_id")
         if self.imap_url.lower() == "imap.gmail.com":
-            self.con.store(mail_id, '+X-GM-LABELS', '\\Trash') # Moved email to trash
+            self.con.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moved email to trash
         else:
-           self.con.store(mail_id, '+FLAGS', '\\Deleted')
+           self.con.store(MAIL_ID, '+FLAGS', '\\Deleted')
         self.con.expunge()
         return
 
