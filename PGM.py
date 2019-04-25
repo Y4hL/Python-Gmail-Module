@@ -201,7 +201,7 @@ class read():
 
         if not mail_id in mail_id_list:
             raise ValueError("Invalid mail_id")
-        if self.imap_url == "imap.gmail.com":
+        if self.imap_url.lower() == "imap.gmail.com":
             self.con.store(mail_id, '+X-GM-LABELS', '\\Trash') # Moved email to trash
         else:
            self.con.store(mail_id, '+FLAGS', '\\Deleted')
