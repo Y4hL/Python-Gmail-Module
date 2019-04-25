@@ -176,10 +176,10 @@ class read():
                 continue
             FILE_NAME = PART.get_filename() # Gets download file name
 
-            if bool(fileName):
-                FILE_PATH = os.path.join(SAVE_PATH, FILENAME)
-                with open(filePath, "wb") as f:
-                    f.write(part.get_payload(decode=True))
+            if bool(FILE_NAME):
+                FILE_PATH = os.path.join(SAVE_PATH, FILE_NAME)
+                with open(FILE_PATH, "wb") as f:
+                    f.write(PART.get_payload(decode=True))
                 return FILE_PATH
             return False
 
