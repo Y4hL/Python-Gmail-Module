@@ -38,10 +38,10 @@ class read():
         # Gets a list of all mail ids in a inbox
         _, LATEST_DATA = self.con.search(None, "ALL")
 
-        MAIL_ID_str = LATEST_DATA[0] # LATEST DATA is a list
-        if MAIL_ID_str == b'': # checks if there are no mails
+        MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
+        if MAIL_ID_STR == b'': # checks if there are no mails
             return [] # returns empty list
-        return MAIL_ID_str.split(b' ') # returns list of mail ids
+        return MAIL_ID_STR.split(b' ') # returns list of mail ids
 
 
     def mail_check(self, MAIL_ID):
