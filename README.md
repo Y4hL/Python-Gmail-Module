@@ -67,10 +67,6 @@ for email in all_emails:
 ```
 MyMail.delete_mail(list_of_mail_ids[0])
 ```
-### Clear trash bin
-```
-MyMail.clear_deleted()
-```
 ### Disconnect from smtp
 ```
 MyMail.disconnect()
