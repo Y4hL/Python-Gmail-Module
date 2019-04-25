@@ -54,20 +54,18 @@ class read():
             raise ValueError("Invalid MAIL_ID")
         return
 
-    def get_mail_date(self, MAIL_ID):
 
+    def get_mail_date(self, MAIL_ID):
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         return MAIL_MESSAGE['Date'] # Returns Email Date
 
 
     def get_mail_subject(self, MAIL_ID):
-
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         return MAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
     def get_mail_author(self, MAIL_ID):
-
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         return MAIL_MESSAGE['From'] # Returns Email Author
 
@@ -194,6 +192,7 @@ class read():
            self.con.store(MAIL_ID, '+FLAGS', '\\Deleted')
         self.con.expunge()
         return
+
 
     def disconnect(self):
         self.con.close()
