@@ -1,7 +1,7 @@
 # PGM
 # Python Gmail Module
+# https://github.com/Y4hL/Python-Gmail-Module/
 
-# Imports
 import base64
 import imaplib
 import email
