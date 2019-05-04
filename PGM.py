@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
-class read():
+class MailReader():
 
     def __init__(self, user, password, imaplib_url="imap.gmail.com", inbox="INBOX"):
         self.user = user
