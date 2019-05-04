@@ -24,6 +24,7 @@ class MailReader():
             self.user = self.user.decode()
         if type(self.password) == bytes:
             self.password = self.password.decode()
+        
         self.con = imaplib.IMAP4_SSL(self.imap_url)
         self.con.login(self.user, self.password)
         self.con.select(self.inbox)
@@ -200,7 +201,7 @@ class MailReader():
         return
 
 
-def send_gmail(user_email, password, recipiant, subject, message, file_location=False):
+def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=False):
     # Returns True if email was sent successfully
     
     # Without 2FA:
@@ -210,36 +211,36 @@ def send_gmail(user_email, password, recipiant, subject, message, file_location=
     # create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
     
-    if type(user_email) != str:
+    if type(USER_EMAIL) != str:
         raise TypeError("email should be a string")
-    if type(password) != str:
+    if type(PASSWORD) != str:
         raise TypeError("password should be a string")
-    if type(recipiant) != str:
+    if type(RECIPIANT) != str:
         raise TypeError("recipiant should be a string")
-    if type(subject) != str:
+    if type(SUBJECT) != str:
         raise TypeError("subject should be a string")
-    if type(message) != str:
+    if type(MESSAGE) != str:
         raise TypeError("message should be a string")
 
     msg = MIMEMultipart()
-    msg['From'] = user_email
-    msg['To'] = recipiant
-    msg['Subject'] = subject
+    msg['From'] = USER_EMAIL
+    msg['To'] = RECIPIANT
+    msg['Subject'] = SUBJECT
 
-    msg.attach(MIMEText(message, 'plain'))
+    msg.attach(MIMEText(MESSAGE, 'plain'))
 
-    if not file_location == False:
+    if not FILE_LOCATION == False:
         file_locations = []
-        if type(file_location) == str:
-            file_locations.append(file_location)
-        if type(file_location) == list:
-            file_locations = file_location
+        if type(FILE_LOCATION) == str:
+            file_locations.append(FILE_LOCATION)
+        if type(FILE_LOCATION) == list:
+            file_locations = FILE_LOCATION
         for files in file_locations:
             files = str(files)
             if not os.path.isfile(files):
                 raise ValueError("File '{files}' does not exist, remember to enter the path")
-            filename = os.path.basename(file_location)
-            attachment = open(file_location, "rb")
+            filename = os.path.basename(FILE_LOCATION)
+            attachment = open(FILE_LOCATION, "rb")
             part = MIMEBase('application', 'octet-stream')
             part.set_payload((attachment).read())
             encoders.encode_base64(part)
@@ -249,9 +250,9 @@ def send_gmail(user_email, password, recipiant, subject, message, file_location=
 
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
         smtp.starttls()
-        smtp.login(user_email, password)
+        smtp.login(USER_EMAIL, PASSWORD)
         text = msg.as_string()
-        smtp.sendmail(user_email, recipiant, text)
+        smtp.sendmail(USER_EMAIL, RECIPIANT, text)
         smtp.quit()
     return
 
