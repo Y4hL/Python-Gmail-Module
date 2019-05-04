@@ -212,15 +212,15 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
     # at: https://myaccount.google.com/apppasswords
     
     if type(USER_EMAIL) != str:
-        raise TypeError("email should be a string")
+        raise TypeError("USER_EMAIL should be a string")
     if type(PASSWORD) != str:
-        raise TypeError("password should be a string")
+        raise TypeError("PASSWORD should be a string")
     if type(RECIPIANT) != str:
-        raise TypeError("recipiant should be a string")
+        raise TypeError("RECIPIANT should be a string")
     if type(SUBJECT) != str:
-        raise TypeError("subject should be a string")
+        raise TypeError("SUBJECT should be a string")
     if type(MESSAGE) != str:
-        raise TypeError("message should be a string")
+        raise TypeError("MESSAGE should be a string")
 
     msg = MIMEMultipart()
     msg['From'] = USER_EMAIL
