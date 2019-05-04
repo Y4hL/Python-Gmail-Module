@@ -253,6 +253,5 @@ def send_gmail(user_email, password, recipiant, subject, message, file_location=
         text = msg.as_string()
         smtp.sendmail(user_email, recipiant, text)
         smtp.quit()
-        return True
-    return False
+    return
 
