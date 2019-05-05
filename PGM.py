@@ -107,7 +107,9 @@ class MailReader():
         self.mail_check(MAIL_ID)
 
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
-        return MAIL_MESSAGE
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+        return EMAIL_MESSAGE
 
 
     def get_mail(self, MAIL_ID):
