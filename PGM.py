@@ -120,9 +120,8 @@ class MailReader():
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
 
-        BODY = self.get_mail_body_from_raw(RAW) # Gets Email Body
+        BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
 
         return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])) # Combines values into dict
 
@@ -138,9 +137,8 @@ class MailReader():
             _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
             EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-            RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
 
-            BODY = self.get_mail_body_from_raw(RAW) # Gets Email Body
+            BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
 
             messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])))
         
