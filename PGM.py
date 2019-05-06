@@ -58,15 +58,21 @@ class MailReader():
 
     def get_mail_date(self, MAIL_ID):
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return MAIL_MESSAGE['Date'] # Returns Email Date
 
 
     def get_mail_subject(self, MAIL_ID):
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return MAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
     def get_mail_author(self, MAIL_ID):
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         return MAIL_MESSAGE['From'] # Returns Email Author
 
@@ -107,9 +113,7 @@ class MailReader():
         self.mail_check(MAIL_ID)
 
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE
+        return MAIL_MESSAGE
 
 
     def get_mail(self, MAIL_ID):
@@ -163,12 +167,46 @@ class MailReader():
         return False
 
 
+    def attachment_state_from_raw(self, MAIL_MESSAGE):
+        # Returns False if no attachment is found
+        # or the file name if one is found
+        
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        for PART in RAW.walk():
+            if PART.get_content_maintype() == "multipype":
+                continue
+            if PART.get("Content-Disposition") is None:
+                continue
+            FILE_NAME = PART.get_filename() # Gets download file name
+            return FILE_NAME
+        return False
+
+
     def get_attachment(self, MAIL_ID, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
         
         self.mail_check(MAIL_ID)
 
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        for PART in RAW.walk():
+            if PART.get_content_maintype() == "multipype":
+                continue
+            if PART.get("Content-Disposition") is None:
+                continue
+            FILE_NAME = PART.get_filename() # Gets download file name
+
+            if bool(FILE_NAME):
+                FILE_PATH = os.path.join(SAVE_PATH, FILE_NAME)
+                with open(FILE_PATH, "wb") as f:
+                    f.write(PART.get_payload(decode=True))
+                return FILE_PATH
+            return False
+
+
+    def get_attachment_from_raw(self, MAIL_MESSAGE, SAVE_PATH):
+        # Returns True or False, depending if a attachment was downloaded
+        
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
