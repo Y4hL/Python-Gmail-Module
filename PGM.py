@@ -57,22 +57,19 @@ class MailReader():
 
 
     def get_mail_date(self, MAIL_ID):
+        
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return MAIL_MESSAGE['Date'] # Returns Email Date
 
 
     def get_mail_subject(self, MAIL_ID):
+
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return MAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
     def get_mail_author(self, MAIL_ID):
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+        
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         return MAIL_MESSAGE['From'] # Returns Email Author
 
