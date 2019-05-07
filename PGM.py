@@ -2,15 +2,15 @@
 # Python Gmail Module
 # https://github.com/Y4hL/Python-Gmail-Module/
 
+import os
+import email
 import base64
 import imaplib
-import email
-import os
 import smtplib
-from email.mime.multipart import MIMEMultipart
+from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
-from email import encoders
+from email.mime.multipart import MIMEMultipart
 
 class MailReader():
 
@@ -24,7 +24,7 @@ class MailReader():
             self.user = self.user.decode()
         if type(self.password) == bytes:
             self.password = self.password.decode()
-        
+   
         self.con = imaplib.IMAP4_SSL(self.imap_url)
         self.con.login(self.user, self.password)
         self.con.select(self.inbox)
@@ -56,12 +56,12 @@ class MailReader():
         return
 
 
-    def get_mail_date(self, MAIL_ID):
+    def get_mail_author(self, MAIL_ID):
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE['Date'] # Returns Email Date
+        return EMAIL_MESSAGE['From'] # Returns Email Author
 
 
     def get_mail_subject(self, MAIL_ID):
@@ -72,16 +72,20 @@ class MailReader():
         return EMAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
-    def get_mail_author(self, MAIL_ID):
+    def get_mail_date(self, MAIL_ID):
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID)
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE['From'] # Returns Email Author
+        return EMAIL_MESSAGE['Date'] # Returns Email Date
 
 
-    def get_mail_body_from_raw(self, MAIL_MESSAGE):
-        
+    def get_mail_body(self, MAIL_ID):
+        # Gets the body of a given MAIL_ID
+
+        self.mail_check(MAIL_ID)
+
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
         for PART in RAW.walk():
             if PART.get_content_type() == 'text/plain':
@@ -93,12 +97,8 @@ class MailReader():
                 return BODY
 
 
-    def get_mail_body(self, MAIL_ID):
-        # Gets the body of a given MAIL_ID
-
-        self.mail_check(MAIL_ID)
-
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+    def get_mail_body_from_raw(self, MAIL_MESSAGE):
+        
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
         for PART in RAW.walk():
             if PART.get_content_type() == 'text/plain':
@@ -246,14 +246,14 @@ class MailReader():
 
 def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=False):
     # Returns True if email was sent successfully
-    
+
     # Without 2FA:
     # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
 
     # With 2FA:
     # create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
-    
+
     if type(USER_EMAIL) != str:
         raise TypeError("USER_EMAIL should be a string")
     if type(PASSWORD) != str:
@@ -281,7 +281,7 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
         for files in file_locations:
             files = str(files)
             if not os.path.isfile(files):
-                raise ValueError("File '{files}' does not exist, remember to enter the path")
+                raise FileNotFoundError("'{files}' does not exist")
             filename = os.path.basename(FILE_LOCATION)
             attachment = open(FILE_LOCATION, "rb")
             part = MIMEBase('application', 'octet-stream')
