@@ -20,17 +20,19 @@ class MailReader():
         self.imap_url = imaplib_url
         self.inbox = inbox
 
-        if type(self.user) == bytes:
+        if type(self.user) == bytes: # Decodes email if needed
             self.user = self.user.decode()
-        if type(self.password) == bytes:
+        if type(self.password) == bytes: # Decodes password if needed
             self.password = self.password.decode()
    
-        self.con = imaplib.IMAP4_SSL(self.imap_url)
-        self.con.login(self.user, self.password)
-        self.con.select(self.inbox)
+        self.con = imaplib.IMAP4_SSL(self.imap_url) # Initiate connection to server
+        self.con.login(self.user, self.password) # Log in
+        self.con.select(self.inbox) # Selects mailbox
 
 
     def change_inbox(self, INBOX):
+        # Allows changing of the mailbox
+
         self.con.select(INBOX)
         return
 
@@ -46,6 +48,7 @@ class MailReader():
 
 
     def mail_check(self, MAIL_ID):
+        # Check if a mail_id is valid
 
         if type(MAIL_ID) != bytes:
             raise TypeError("MAIL_ID should be a bytes object")
@@ -57,24 +60,27 @@ class MailReader():
 
 
     def get_mail_author(self, MAIL_ID):
+        # Return the author of a specific email
         
-        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return EMAIL_MESSAGE['From'] # Returns Email Author
 
 
     def get_mail_subject(self, MAIL_ID):
+        # Return the subject of a specific email
 
-        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return EMAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
     def get_mail_date(self, MAIL_ID):
+        # Return the date of a specific email
         
-        MAIL_MESSAGE = self.get_raw(MAIL_ID)
+        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
         return EMAIL_MESSAGE['Date'] # Returns Email Date
@@ -83,10 +89,10 @@ class MailReader():
     def get_mail_body(self, MAIL_ID):
         # Gets the body of a given MAIL_ID
 
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1]) # Exracts mail from raw format
         for PART in RAW.walk():
             if PART.get_content_type() == 'text/plain':
                 BODY = PART.get_payload()
@@ -98,8 +104,9 @@ class MailReader():
 
 
     def get_mail_body_from_raw(self, MAIL_MESSAGE):
+        # Gets the mail body from the get_raw function
         
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1]) # Exracts mail from raw format
         for PART in RAW.walk():
             if PART.get_content_type() == 'text/plain':
                 BODY = PART.get_payload()
@@ -111,18 +118,18 @@ class MailReader():
 
 
     def get_raw(self, MAIL_ID):
-        # Gets raw email
+        # Gets the raw email
 
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
         return MAIL_MESSAGE
 
 
     def get_mail(self, MAIL_ID):
         # Same as list_mails function, but only returns it for one given mail
 
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
@@ -136,30 +143,30 @@ class MailReader():
     def list_mails(self):
         # returns a list of dictionaries ( each dictionary is a mail )
 
-        MAIL_ID_LIST = self.get_mail_ids()
+        MAIL_ID_LIST = self.get_mail_ids() # Gets all mail_ids
 
         messages = []
 
-        for MAIL_ID in MAIL_ID_LIST:
-            _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        for MAIL_ID in MAIL_ID_LIST: # Loops through all mail ids
+            _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE) # Extracts the email message
 
-            BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
+            BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets the Email Body
 
             messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])))
         
-        return messages
+        return messages # Returns dictionary of all mails
 
 
     def attachment_state(self, MAIL_ID):
         # Returns False if no attachment is found
         # or the file name if one is found
 
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Extracts raw email
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
                 continue
@@ -188,10 +195,10 @@ class MailReader():
     def get_attachment(self, MAIL_ID, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
         
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
                 continue
@@ -210,7 +217,7 @@ class MailReader():
     def get_attachment_from_raw(self, MAIL_MESSAGE, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
         
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
                 continue
@@ -227,20 +234,23 @@ class MailReader():
 
 
     def delete_mail(self, MAIL_ID):
+        # Delete a specific mail by mail_id
         
-        self.mail_check(MAIL_ID)
+        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        if self.imap_url.lower() == "imap.gmail.com":
-            self.con.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moved email to trash
+        if self.imap_url.lower() == "imap.gmail.com": # Checks if imap url is from google
+            self.con.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moves mail to trash
         else:
            self.con.store(MAIL_ID, '+FLAGS', '\\Deleted')
-        self.con.expunge()
+        self.con.expunge() # Expunge
         return
 
 
     def disconnect(self):
-        self.con.close()
-        self.con.logout()
+        # Disconnect the client ( Not Nessecary )
+
+        self.con.close() # Closes client
+        self.con.logout() # Logs out
         return
 
 
@@ -272,15 +282,15 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
 
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
-    if not FILE_LOCATION == False:
+    if not FILE_LOCATION == False: # Checks for files to append
         file_locations = []
         if type(FILE_LOCATION) == str:
             file_locations.append(FILE_LOCATION)
         if type(FILE_LOCATION) == list:
             file_locations = FILE_LOCATION
-        for files in file_locations:
+        for files in file_locations: # Searches for files and appends them to the email
             files = str(files)
-            if not os.path.isfile(files):
+            if not os.path.isfile(files): # Check if file exists
                 raise FileNotFoundError("'{files}' does not exist")
             filename = os.path.basename(FILE_LOCATION)
             attachment = open(FILE_LOCATION, "rb")
@@ -289,13 +299,13 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
             encoders.encode_base64(part)
             part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
 
-            msg.attach(part)
+            msg.attach(part) # Attaches a file
 
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp: # Creates connection
         smtp.starttls()
-        smtp.login(USER_EMAIL, PASSWORD)
-        text = msg.as_string()
-        smtp.sendmail(USER_EMAIL, RECIPIANT, text)
-        smtp.quit()
+        smtp.login(USER_EMAIL, PASSWORD) # Logs in
+        text = msg.as_string() 
+        smtp.sendmail(USER_EMAIL, RECIPIANT, text) # Sends email
+        smtp.quit() # Closes connection
     return
 
