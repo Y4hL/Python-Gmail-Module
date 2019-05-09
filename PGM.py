@@ -298,9 +298,9 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
             msg.attach(part) # Attaches PART to mail
 
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp: # Creates connection
-        smtp.starttls()
+        smtp.starttls() # Starts TLS connection protocol
         smtp.login(USER_EMAIL, PASSWORD) # Logs in
-        text = msg.as_string() 
+        text = msg.as_string() # Stores mail as string
         smtp.sendmail(USER_EMAIL, RECIPIANT, text) # Sends email
         smtp.quit() # Closes connection
     return
