@@ -264,16 +264,9 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
     # create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
 
-    if type(USER_EMAIL) != str:
-        raise TypeError("USER_EMAIL should be a string")
-    if type(PASSWORD) != str:
-        raise TypeError("PASSWORD should be a string")
-    if type(RECIPIANT) != str:
-        raise TypeError("RECIPIANT should be a string")
-    if type(SUBJECT) != str:
-        raise TypeError("SUBJECT should be a string")
-    if type(MESSAGE) != str:
-        raise TypeError("MESSAGE should be a string")
+    for parameter in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
+        if type(parameter) != str:
+            raise TypeError("All parameters should be strings.")
 
     msg = MIMEMultipart()
     msg['From'] = USER_EMAIL
@@ -286,8 +279,11 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
         file_locations = []
         if type(FILE_LOCATION) == str:
             file_locations.append(FILE_LOCATION)
-        if type(FILE_LOCATION) == list:
+        elif type(FILE_LOCATION) == list:
             file_locations = FILE_LOCATION
+        else:
+            raise TypeError("FILE_LOCATION parameters should be a string or list")
+        
         for files in file_locations: # Searches for files and appends them to the email
             files = str(files)
             if not os.path.isfile(files): # Check if file exists
