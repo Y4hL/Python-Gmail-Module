@@ -287,15 +287,15 @@ def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=
         for files in file_locations: # Searches for files and appends them to the email
             files = str(files)
             if not os.path.isfile(files): # Check if file exists
-                raise FileNotFoundError("'{files}' does not exist")
-            filename = os.path.basename(FILE_LOCATION)
-            attachment = open(FILE_LOCATION, "rb")
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload((attachment).read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
+                raise FileNotFoundError("'{files}' does not exist") # Error if FileNotFound
+            filename = os.path.basename(FILE_LOCATION) # Gets file location
+            attachment = open(FILE_LOCATION, "rb") # Opens attachment
+            part = MIMEBase('application', 'octet-stream') # Creates PART
+            part.set_payload((attachment).read()) # Attaches payload to PART
+            encoders.encode_base64(part) # base64 encodes the PART
+            part.add_header('Content-Disposition', "attachment; filename= %s" % filename) # Adds Header to PART
 
-            msg.attach(part) # Attaches a file
+            msg.attach(part) # Attaches PART to mail
 
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp: # Creates connection
         smtp.starttls()
