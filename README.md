@@ -17,7 +17,7 @@ import PGM
 ```
 ### Authenticate a connection
 ```
-MyMail = PGM.read(email, password)
+MyMail = PGM.MailReader(email, password)
 ```
 ### Change inbox
 ```
