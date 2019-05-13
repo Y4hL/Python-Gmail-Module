@@ -3,8 +3,6 @@ Easily Send, Read and Download attachments from Gmail with Python
 
 # Setup  
   
-pip install email  
-  
 SMTP login method is not enabled by default.  
 Enable it [here](https://myaccount.google.com/lesssecureapps)  
   
