@@ -14,7 +14,7 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     install_requires=INSTALL_PACKAGES,
-    version='v0.1',
+    version='v0.2',
     url='http://github.com/Y4hL/Python-Gmail-Module',
     author='Y4hL',
     author_email='rasmus.kinnunen1@gmail.com',
