@@ -8,7 +8,7 @@ with open(path.join(DIR, 'README.md')) as f:
     README = f.read()
 
 setup(
-    name='PGM',
+    name='Python-Gmail-Module',
     packages=['PGM'],
     description="Easily Send, Read and Download attachments from Gmail with Python",
     long_description=README,
