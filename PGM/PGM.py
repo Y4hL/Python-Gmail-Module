@@ -167,14 +167,16 @@ class MailReader():
 
         _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Extracts raw email
+        FILE_NAMES = []
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
                 continue
             if PART.get("Content-Disposition") is None:
                 continue
-            FILE_NAME = PART.get_filename() # Gets download file name
-            return FILE_NAME
-        return False
+            FILE_NAMES.append(PART.get_filename()) # Adds filename to list
+        if len(FILE_NAMES) == 0:
+            return False
+        return FILE_NAMES
 
 
     def attachment_state_from_raw(self, MAIL_MESSAGE):
@@ -182,18 +184,22 @@ class MailReader():
         # or the file name if one is found
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
+        FILE_NAMES = []
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
                 continue
             if PART.get("Content-Disposition") is None:
                 continue
-            FILE_NAME = PART.get_filename() # Gets download file name
-            return FILE_NAME
-        return False
+            FILE_NAMES.append(PART.get_filename()) # Adds filename to list
+        if len(FILE_NAMES) == 0:
+            return False
+        return FILE_NAMES
 
 
-    def get_attachment(self, MAIL_ID, SAVE_PATH):
+    def get_attachment(self, MAIL_ID, ATTACHMENT_NAME, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
+        # Attchement_name should be given from the list that you receive
+        # from the attachment_state and attachment_state_from_raw functions
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
@@ -204,17 +210,18 @@ class MailReader():
                 continue
             if PART.get("Content-Disposition") is None:
                 continue
-            FILE_NAME = PART.get_filename() # Gets download file name
+            if ATTACHMENT_NAME != PART.get_filename():
+                continue
 
-            if bool(FILE_NAME):
-                FILE_PATH = os.path.join(SAVE_PATH, FILE_NAME)
-                with open(FILE_PATH, "wb") as f:
-                    f.write(PART.get_payload(decode=True))
-                return FILE_PATH
-            return False
+            with open(os.path.join(SAVE_PATH, PART.get_filename()), 'wb') as f:
+                f.write(PART.get_payload(decode=True))
+        
+        return False
 
 
-    def get_attachment_from_raw(self, MAIL_MESSAGE, SAVE_PATH):
+
+
+    def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME, SAVE_PATH):
         # Returns True or False, depending if a attachment was downloaded
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
@@ -223,14 +230,13 @@ class MailReader():
                 continue
             if PART.get("Content-Disposition") is None:
                 continue
-            FILE_NAME = PART.get_filename() # Gets download file name
+            if ATTACHMENT_NAME != PART.get_filename(): 
+                continue
 
-            if bool(FILE_NAME):
-                FILE_PATH = os.path.join(SAVE_PATH, FILE_NAME)
-                with open(FILE_PATH, "wb") as f:
-                    f.write(PART.get_payload(decode=True))
-                return FILE_PATH
-            return False
+            with open(os.path.join(SAVE_PATH, PART.get_filename()), "wb") as f:
+                f.write(PART.get_payload(decode=True))
+            
+        return False
 
 
     def delete_mail(self, MAIL_ID):
