@@ -9,6 +9,10 @@ Enable it [here](https://myaccount.google.com/lesssecureapps)
 Alternatively if you have 2fa enabled,  
 you will need to create a app password [here](https://myaccount.google.com/apppasswords)  
   
+```
+python setup.py install 
+```
+  
 # Example
 
 ### Importing
