@@ -37,6 +37,25 @@ class MailReader():
         return
 
 
+    def filter_by_author(self, AUTHOR):
+        # filters email ids by their authors
+
+        if type(AUTHOR) != str:
+            raise TypeError("AUTHOR should be a string.")
+
+        FILTERED_MAILS = []
+
+        for MAIL_ID in self.get_mail_ids():
+
+            if not AUTHOR in self.get_mail_author(MAIL_ID):
+
+                continue
+            
+            FILTERED_MAILS.append(MAIL_ID)
+
+        return FILTERED_MAILS
+
+
     def get_mail_ids(self):
         # Gets a list of all mail ids in a inbox
         _, LATEST_DATA = self.con.search(None, "ALL")
