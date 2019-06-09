@@ -234,6 +234,8 @@ class MailReader():
 
             with open(os.path.join(SAVE_PATH, PART.get_filename()), 'wb') as f:
                 f.write(PART.get_payload(decode=True))
+            
+            return True
         
         return False
 
@@ -254,6 +256,8 @@ class MailReader():
 
             with open(os.path.join(SAVE_PATH, PART.get_filename()), "wb") as f:
                 f.write(PART.get_payload(decode=True))
+            
+            return True
             
         return False
 
