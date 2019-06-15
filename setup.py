@@ -14,7 +14,7 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     install_requires=INSTALL_PACKAGES,
-    licence="MIT",
+    licence="GNU GPLv3",
     version='v0.2',
     url='http://github.com/Y4hL/Python-Gmail-Module',
     author='Y4hL',
