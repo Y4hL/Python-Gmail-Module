@@ -14,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 
 class MailReader():
 
-    def __init__(self, user, password, imaplib_url="imap.gmail.com", inbox="INBOX"):
+    def __init__(self, user : str, password : str, imaplib_url="imap.gmail.com", inbox="INBOX"):
         self.user = user
         self.password = password
         self.imap_url = imaplib_url
@@ -30,14 +30,14 @@ class MailReader():
         self.con.select(self.inbox) # Selects mailbox
 
 
-    def change_inbox(self, INBOX):
+    def change_inbox(self, INBOX : str):
         # Allows changing of the mailbox
 
         self.con.select(INBOX)
         return
 
 
-    def filter_by_author(self, AUTHOR):
+    def filter_by_author(self, AUTHOR : str):
         # Filters email ids by their authors
 
         if type(AUTHOR) != str:
@@ -64,7 +64,7 @@ class MailReader():
         return MAIL_ID_STR.split(b' ') # returns list of mail ids
 
 
-    def mail_check(self, MAIL_ID):
+    def mail_check(self, MAIL_ID : bytes):
         # Check if a mail_id is valid
 
         if type(MAIL_ID) != bytes:
@@ -76,7 +76,7 @@ class MailReader():
         return
 
 
-    def get_mail_author(self, MAIL_ID):
+    def get_mail_author(self, MAIL_ID : bytes):
         # Return the author of a specific email
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -85,7 +85,7 @@ class MailReader():
         return EMAIL_MESSAGE['From'] # Returns Email Author
 
 
-    def get_mail_subject(self, MAIL_ID):
+    def get_mail_subject(self, MAIL_ID : bytes):
         # Return the subject of a specific email
 
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -94,7 +94,7 @@ class MailReader():
         return EMAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
-    def get_mail_date(self, MAIL_ID):
+    def get_mail_date(self, MAIL_ID : bytes):
         # Return the date of a specific email
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -103,7 +103,7 @@ class MailReader():
         return EMAIL_MESSAGE['Date'] # Returns Email Date
 
 
-    def get_mail_body(self, MAIL_ID):
+    def get_mail_body(self, MAIL_ID : bytes):
         # Gets the body of a given MAIL_ID
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -134,7 +134,7 @@ class MailReader():
                 return BODY
 
 
-    def get_raw(self, MAIL_ID):
+    def get_raw(self, MAIL_ID : bytes):
         # Gets the raw email
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -143,7 +143,7 @@ class MailReader():
         return MAIL_MESSAGE
 
 
-    def get_mail(self, MAIL_ID):
+    def get_mail(self, MAIL_ID: bytes):
         # Same as list_mails function, but only returns it for one given mail
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -176,7 +176,7 @@ class MailReader():
         return messages # Returns dictionary of all mails
 
 
-    def attachment_state(self, MAIL_ID):
+    def attachment_state(self, MAIL_ID: bytes):
         # Returns False if no attachment is found
         # or the file name if one is found
 
@@ -213,7 +213,7 @@ class MailReader():
         return FILE_NAMES
 
 
-    def get_attachment(self, MAIL_ID, ATTACHMENT_NAME, SAVE_PATH):
+    def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME: str, SAVE_PATH : str):
         # Returns True or False, depending if a attachment was downloaded
         # Attchement_name should be given from the list that you receive
         # from the attachment_state and attachment_state_from_raw functions
@@ -240,7 +240,7 @@ class MailReader():
 
 
 
-    def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME, SAVE_PATH):
+    def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str):
         # Returns True or False, depending if a attachment was downloaded
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
@@ -260,7 +260,7 @@ class MailReader():
         return False
 
 
-    def delete_mail(self, MAIL_ID):
+    def delete_mail(self, MAIL_ID : bytes):
         # Delete a specific mail by mail_id
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -281,8 +281,8 @@ class MailReader():
         return
 
 
-def send_gmail(USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE, FILE_LOCATION=False):
-    # Returns True if email was sent successfully
+def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT, MESSAGE : str, FILE_LOCATION=False):
+    # Sends Gmail with or without attachemnts
 
     # Without 2FA:
     # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
