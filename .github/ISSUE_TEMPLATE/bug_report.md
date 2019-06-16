@@ -1,31 +1,24 @@
----
-name: Bug report
+--
+name: "\U0001F41B Bug report"
 about: Create a report to help us improve
-title: "[BUG]"
-labels: bug
-assignees: Y4hL
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!--
+Thank you for reporting a possible bug in Node.js.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Please fill in as much of the template below as you can.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+Version: output of `python --version`
+Platform: output of `uname -a` (UNIX), or version and 32 or 64-bit (Windows)
+Subsystem: if known, please specify the affected core module name
 
-**Code**
-If applicable, add the code to help explain your problem.
+If possible, please provide code that demonstrates the problem, keeping it as
+simple and free of external dependencies as you can.
+-->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. Windows]
- - Python Version: [e.g. 3.6.6]
+* **Version**:
+* **Platform**:
+* **Subsystem**:
 
-**Additional context**
-Add any other context about the problem here.
+<!-- Please provide more details below this comment. -->
