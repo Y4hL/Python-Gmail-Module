@@ -37,7 +37,7 @@ class MailReader():
         return
 
 
-    def filter_by_author(self, AUTHOR : str):
+    def filter_by_author(self, AUTHOR : str) -> list:
         # Filters email ids by their authors
 
         if type(AUTHOR) != str:
@@ -54,7 +54,7 @@ class MailReader():
         return FILTERED_MAILS
 
 
-    def get_mail_ids(self):
+    def get_mail_ids(self) -> list:
         # Gets a list of all mail ids in a inbox
         _, LATEST_DATA = self.con.search(None, "ALL")
 
@@ -76,7 +76,7 @@ class MailReader():
         return
 
 
-    def get_mail_author(self, MAIL_ID : bytes):
+    def get_mail_author(self, MAIL_ID : bytes) -> str:
         # Return the author of a specific email
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -85,7 +85,7 @@ class MailReader():
         return EMAIL_MESSAGE['From'] # Returns Email Author
 
 
-    def get_mail_subject(self, MAIL_ID : bytes):
+    def get_mail_subject(self, MAIL_ID : bytes) -> str:
         # Return the subject of a specific email
 
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -94,7 +94,7 @@ class MailReader():
         return EMAIL_MESSAGE['Subject'] # Returns Email Subject
 
 
-    def get_mail_date(self, MAIL_ID : bytes):
+    def get_mail_date(self, MAIL_ID : bytes) -> str:
         # Return the date of a specific email
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
@@ -103,7 +103,7 @@ class MailReader():
         return EMAIL_MESSAGE['Date'] # Returns Email Date
 
 
-    def get_mail_body(self, MAIL_ID : bytes):
+    def get_mail_body(self, MAIL_ID : bytes) -> str:
         # Gets the body of a given MAIL_ID
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -120,7 +120,7 @@ class MailReader():
                 return BODY
 
 
-    def get_mail_body_from_raw(self, MAIL_MESSAGE):
+    def get_mail_body_from_raw(self, MAIL_MESSAGE) -> str:
         # Gets the mail body from the get_raw function
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1]) # Exracts mail from raw format
@@ -143,7 +143,7 @@ class MailReader():
         return MAIL_MESSAGE
 
 
-    def get_mail(self, MAIL_ID: bytes):
+    def get_mail(self, MAIL_ID: bytes) -> dict:
         # Same as list_mails function, but only returns it for one given mail
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -157,7 +157,7 @@ class MailReader():
         return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])) # Combines values into dict
 
 
-    def list_mails(self):
+    def list_mails(self) -> list:
         # returns a list of dictionaries ( each dictionary is a mail )
 
         MAIL_ID_LIST = self.get_mail_ids() # Gets all mail_ids
@@ -176,7 +176,7 @@ class MailReader():
         return messages # Returns dictionary of all mails
 
 
-    def attachment_state(self, MAIL_ID: bytes):
+    def attachment_state(self, MAIL_ID: bytes) -> list:
         # Returns False if no attachment is found
         # or the file name if one is found
 
@@ -196,7 +196,7 @@ class MailReader():
         return FILE_NAMES
 
 
-    def attachment_state_from_raw(self, MAIL_MESSAGE):
+    def attachment_state_from_raw(self, MAIL_MESSAGE) -> list:
         # Returns False if no attachment is found
         # or the file name if one is found
         
@@ -213,7 +213,7 @@ class MailReader():
         return FILE_NAMES
 
 
-    def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME: str, SAVE_PATH : str):
+    def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME: str, SAVE_PATH : str) -> bool:
         # Returns True or False, depending if a attachment was downloaded
         # Attchement_name should be given from the list that you receive
         # from the attachment_state and attachment_state_from_raw functions
@@ -240,7 +240,7 @@ class MailReader():
 
 
 
-    def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str):
+    def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
         # Returns True or False, depending if a attachment was downloaded
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
