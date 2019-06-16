@@ -67,7 +67,7 @@ class MailReader():
     def mail_check(self, MAIL_ID : bytes):
         # Check if a mail_id is valid
 
-        if type(MAIL_ID) != bytes:
+        if not isinstance(MAIL_ID, bytes):
             raise TypeError("MAIL_ID should be a bytes object")
 
         MAIL_IDS = self.get_mail_ids()
@@ -177,7 +177,7 @@ class MailReader():
 
 
     def attachment_state(self, MAIL_ID: bytes) -> list:
-        # Returns False if no attachment is found
+        # Returns empty list if no attachment is found
         # or the file name if one is found
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -191,13 +191,11 @@ class MailReader():
             if PART.get("Content-Disposition") is None:
                 continue
             FILE_NAMES.append(PART.get_filename()) # Adds filename to list
-        if len(FILE_NAMES) == 0:
-            return False
         return FILE_NAMES
 
 
     def attachment_state_from_raw(self, MAIL_MESSAGE) -> list:
-        # Returns False if no attachment is found
+        # Returns empty list if no attachment is found
         # or the file name if one is found
         
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # gets email from list
@@ -208,8 +206,6 @@ class MailReader():
             if PART.get("Content-Disposition") is None:
                 continue
             FILE_NAMES.append(PART.get_filename()) # Adds filename to list
-        if len(FILE_NAMES) == 0:
-            return False
         return FILE_NAMES
 
 
@@ -292,8 +288,8 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT, MESSA
     # at: https://myaccount.google.com/apppasswords
 
     for parameter in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
-        if type(parameter) != str:
-            raise TypeError("All parameters should be strings.")
+        if not isinstance(parameter, str):
+            raise TypeError
 
     msg = MIMEMultipart()
     msg['From'] = USER_EMAIL

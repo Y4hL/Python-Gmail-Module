@@ -43,7 +43,7 @@ if __name__ == '__main__':
         Attachments = Client.attachment_state(MAIL_ID)
 
         # Check if there is an attachment(s)
-        if Attachments == False:
+        if Attachments == []:
 
             continue
         
