@@ -47,11 +47,9 @@ class MailReader():
 
         for MAIL_ID in self.get_mail_ids(): # Loops through mail_id list
 
-            if not AUTHOR in self.get_mail_author(MAIL_ID): # Check if the given author is in the author
+            if AUTHOR in self.get_mail_author(MAIL_ID): # Check if the given author is in the author
 
-                continue
-            
-            FILTERED_MAILS.append(MAIL_ID) # Appends filtered mail_id to list
+                FILTERED_MAILS.append(MAIL_ID) # Appends filtered mail_id to list
 
         return FILTERED_MAILS
 
