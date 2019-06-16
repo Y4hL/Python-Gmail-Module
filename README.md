@@ -1,6 +1,7 @@
-# Python-Gmail-Module
-Easily Send Mails with attachments and read mails with attachments  
-
+# Python-Gmail-Module  
+Easily Send and Receive Mails with Python  
+Conveniently Send and Download Attachements  
+  
 ## Setup  
   
 [SMTP Login](https://myaccount.google.com/lesssecureapps) method is not enabled by default.  
