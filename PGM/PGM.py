@@ -253,6 +253,32 @@ class MailReader():
             
         return False
 
+    
+    def delete_mails(self, MAIL_IDS : list):
+        # This should be used to delete multiple mails at once,
+        # since deleting a mail can change the mail ID of other mails
+
+        # Check that MAIL_IDS is a list
+        if not isinstance(MAIL_IDS, list):
+            raise TypeError
+
+        # Sorts Mail IDs to be in order
+        MAIL_IDS.sort()
+
+        # Reverse list, so older mails get deleted first
+        # Therefore mail ids of yet to be deleted mails do not change
+        MAIL_IDS = MAIL_IDS[:-1]
+
+        # Loops through mail IDs
+        for MAIL_ID in MAIL_IDS:
+
+            # Check that the mail ID is valid
+            self.mail_check(MAIL_ID)
+
+            # Deleted mail
+            self.delete_mail(MAIL_ID)
+        return
+
 
     def delete_mail(self, MAIL_ID : bytes):
         # Delete a specific mail by mail_id
