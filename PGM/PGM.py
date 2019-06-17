@@ -234,8 +234,6 @@ class MailReader():
         return False
 
 
-
-
     def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
         # Returns True or False, depending if a attachment was downloaded
         
@@ -299,20 +297,19 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT, MESSA
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
     if not FILE_LOCATION == False: # Checks for files to append
-        file_locations = []
         if type(FILE_LOCATION) == str:
-            file_locations.append(FILE_LOCATION)
+            FILES = [FILE_LOCATION]
         elif type(FILE_LOCATION) == list:
-            file_locations = FILE_LOCATION
+            FILES = FILE_LOCATION
         else:
-            raise TypeError("FILE_LOCATION parameters should be a string or list")
+            raise TypeError("FILE_LOCATION parameter should be a string or list")
         
-        for files in file_locations: # Searches for files and appends them to the email
-            files = str(files)
-            if not os.path.isfile(files): # Check if file exists
-                raise FileNotFoundError("'{files}' does not exist") # Error if FileNotFound
-            filename = os.path.basename(FILE_LOCATION) # Gets file location
-            attachment = open(FILE_LOCATION, "rb") # Opens attachment
+        for FILE in FILES: # Searches for files and appends them to the email
+            FILE = str(FILE)
+            if not os.path.isfile(FILE): # Check if file exists
+                raise FileNotFoundError("'{FILE}' does not exist") # Error if FileNotFound
+            filename = os.path.basename(FILE) # Gets file location
+            attachment = open(FILE, "rb") # Opens attachment
             part = MIMEBase('application', 'octet-stream') # Creates PART
             part.set_payload((attachment).read()) # Attaches payload to PART
             encoders.encode_base64(part) # base64 encodes the PART
