@@ -1,6 +1,6 @@
+import os
 import io
 from setuptools import setup
-import os
 
 
 # Package meta-data.
@@ -14,15 +14,16 @@ REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '0.2.0'
 
 
-
 here = os.path.dirname(os.path.abspath(__file__))
 
+def read(filename):
+    """ This function is reads in the file with the file path """
+    filepath = os.path.join(here, filename)
+    with io.open(filepath, mode="r", encoding="utf-8") as f:
+        return f.read()
+
 # Required Packages
-try:
-    with io.open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as e:
-        REQUIRED = e.read().splitlines()
-except FileNotFoundError:
-    REQUIRED = []
+REQUIRED = read('requirements.txt').splitlines()
 
 # Optional Packages
 EXTRAS = {
@@ -31,13 +32,6 @@ EXTRAS = {
     
     }
 
-# Import the README and use it as the long-description.
-# Note: this will only work if 'README.md' is present in the MANIFEST.in file!
-try:
-    with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
-        long_description = '\n' + f.read()
-except FileNotFoundError:
-    long_description = DESCRIPTION
 
 
 # Setup
@@ -45,7 +39,7 @@ setup(
     name=NAME,
     packages=PACKAGES,
     description=DESCRIPTION,
-    long_description=README,
+    long_description=read('README.md'),
     long_description_content_type='text/markdown',
     install_requires=REQUIRED,
     licence="GNU GPLv3",
