@@ -1,6 +1,12 @@
 # PGM
 # Python Gmail Module
+
+# GitHub:
 # https://github.com/Y4hL/Python-Gmail-Module/
+
+# PyPI:
+# https://pypi.org/project/Python-Gmail-Module/
+
 
 import os
 import email
