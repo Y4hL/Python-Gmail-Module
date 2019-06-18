@@ -6,7 +6,7 @@ from setuptools import setup
 # Package meta-data.
 NAME = 'Python-Gmail-Module'
 PACKAGES = ['PGM']
-DESCRIPTION = 'Easily Send and Receive Mails with Python\nConveniently Send and Download Attachements'
+DESCRIPTION = 'Easily Send and Receive Mails with Python'
 URL = 'http://github.com/Y4hL/Python-Gmail-Module'
 EMAIL = 'rasmus.kinnunen1@gmail.com'
 AUTHOR = 'Y4hL'
@@ -50,6 +50,9 @@ setup(
     tests_require=[],
     include_package_data=True,
     python_requires=REQUIRES_PYTHON,
+    setup_requires=['setuptools>=38.6.0', 
+                    'wheel>=0.31.0', 
+                    'twine>=1.11.0'],
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
