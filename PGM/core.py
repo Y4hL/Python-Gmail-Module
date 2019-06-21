@@ -46,7 +46,7 @@ class MailReader():
     def filter_by_author(self, AUTHOR : str) -> list:
         # Filters email ids by their authors
 
-        if type(AUTHOR) != str:
+        if not isinstance(AUTHOR, str):
             raise TypeError("AUTHOR should be a string.")
 
         FILTERED_MAILS = []
