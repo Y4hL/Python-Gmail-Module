@@ -329,9 +329,9 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT, MESSA
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
     if not FILE_LOCATION == False: # Checks for files to append
-        if type(FILE_LOCATION) == str:
+        if isinstance (FILE_LOCATION, str):
             FILES = [FILE_LOCATION]
-        elif type(FILE_LOCATION) == list:
+        elif isinstance(FILE_LOCATION, list):
             FILES = FILE_LOCATION
         else:
             raise TypeError("FILE_LOCATION parameter should be a string or list")
