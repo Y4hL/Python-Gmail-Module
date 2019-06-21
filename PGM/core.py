@@ -26,9 +26,9 @@ class MailReader():
         self.imap_url = imaplib_url
         self.inbox = inbox
 
-        if type(self.user) == bytes: # Decodes email if needed
+        if isinstance(self.user, bytes): # Decodes email if needed
             self.user = self.user.decode()
-        if type(self.password) == bytes: # Decodes password if needed
+        if isinstance(self.password, bytes): # Decodes password if needed
             self.password = self.password.decode()
    
         self.con = imaplib.IMAP4_SSL(self.imap_url) # Initiate connection to server
