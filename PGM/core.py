@@ -39,6 +39,7 @@ class MailReader():
     def change_inbox(self, INBOX : str):
         # Allows changing of the mailbox
 
+        self.inbox = INBOX
         self.con.select(INBOX)
         return
 
