@@ -11,7 +11,7 @@ URL = 'http://github.com/Y4hL/mailpy'
 EMAIL = 'rasmus.kinnunen1@gmail.com'
 AUTHOR = 'https://github.com/Y4hL'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 
 here = os.path.dirname(os.path.abspath(__file__))
