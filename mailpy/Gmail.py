@@ -1,11 +1,10 @@
-# PGM
-# Python Gmail Module
+# mailpy
 
 # GitHub:
-# https://github.com/Y4hL/Python-Gmail-Module/
+# https://github.com/Y4hL/mailpy/
 
 # PyPI:
-# https://pypi.org/project/Python-Gmail-Module/
+# https://pypi.org/project/mailpy/
 
 
 import os
@@ -13,34 +12,101 @@ import email
 import base64
 import imaplib
 import smtplib
+from .exceptions import *
 from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 
-class MailReader():
+class Gmail():
 
-    def __init__(self, user : str, password : str, imaplib_url="imap.gmail.com", inbox="INBOX"):
-        self.user = user
+    # With 2FA:
+    # create a app password and use it instead of the real password
+    # at: https://myaccount.google.com/apppasswords
+
+    # Without 2FA:
+    # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
+
+    # Gmail IMAP defaults
+    GMAIL_IMAP_HOST = 'imap.gmail.com'
+    GMAIL_IMAP_PORT = 993
+    
+    def __init__(self, username : str, password : str, inbox="INBOX"):
+        self.username = username
         self.password = password
-        self.imap_url = imaplib_url
         self.inbox = inbox
 
-        if isinstance(self.user, bytes): # Decodes email if needed
-            self.user = self.user.decode()
-        if isinstance(self.password, bytes): # Decodes password if needed
-            self.password = self.password.decode()
-   
-        self.con = imaplib.IMAP4_SSL(self.imap_url) # Initiate connection to server
-        self.con.login(self.user, self.password) # Log in
-        self.con.select(self.inbox) # Selects mailbox
+        self.imap = None
+        self.mailbox = None
+        self.mailboxes = None
+        self.logged_in = False
 
 
-    def change_inbox(self, INBOX : str):
+    def _connect_imap(self):
+
+        self.imap = imaplib.IMAP4_SSL(
+            self.GMAIL_IMAP_HOST, self.GMAIL_IMAP_PORT)
+        return
+
+
+    def _login_imap(self, username, password) -> bool:
+
+        if not self.imap:
+            self._connect_imap()
+        imap_login = self.imap.login(self.username, self.password)
+        self.logged_in = (imap_login and imap_login[0] == 'OK')
+        if self.logged_in:
+            self.fetch_mailboxes()
+        return self.logged_in
+
+
+    def login(self, username, password) -> bool:
+
+        self.username = username
+        self.password = password
+
+        try:
+            self._login_imap(self.username, self.password)
+        except imaplib.IMAP4.error:
+            raise AuthenticationError
+        # Use 'INBOX' mailbox by default
+        self.use_mailbox('INBOX')
+        return self.logged_in
+
+
+    def fetch_mailboxes(self) -> list:
+        response, mailbox_list = self.imap.list()
+        if response == 'OK':
+            self.mailboxes = []
+            for mailbox in mailbox_list:
+                mailbox_name = mailbox.split(
+                    b'"/"')[-1].replace(b'"', b'').strip()
+                self.mailboxes.append(mailbox_name)
+            return self.mailboxes
+
+
+    def use_mailbox(self, MAILBOX : str):
         # Allows changing of the mailbox
 
-        self.inbox = INBOX
-        self.con.select(INBOX)
+        self.mailbox = MAILBOX
+        self.imap.select(MAILBOX)
+        return
+
+
+    def create_mailbox(self, mailbox_name):
+
+        if not mailbox_name in self.mailboxes:
+            self.imap.create(mailbox_name)
+            self.mailboxes.append(mailbox_name)
+        else:
+            raise MailboxExists
+        return
+
+    def delete_mailbox(self, mailbox_name):
+        
+        if mailbox_name in self.mailboxes:
+            self.mailboxes.remove(mailbox_name)
+            self.imap.delete(mailbox_name)
         return
 
 
@@ -63,7 +129,7 @@ class MailReader():
 
     def get_mail_ids(self) -> list:
         # Gets a list of all mail ids in a inbox
-        _, LATEST_DATA = self.con.search(None, "ALL")
+        _, LATEST_DATA = self.imap.search(None, "ALL")
 
         MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
         if MAIL_ID_STR == b'': # checks if there are no mails
@@ -115,7 +181,7 @@ class MailReader():
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1]) # Exracts mail from raw format
         for PART in RAW.walk():
             if PART.get_content_type() == 'text/plain':
@@ -155,7 +221,7 @@ class MailReader():
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)")
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)")
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
         EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
 
@@ -172,7 +238,7 @@ class MailReader():
         messages = []
 
         for MAIL_ID in MAIL_ID_LIST: # Loops through all mail ids
-            _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
+            _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
             EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE) # Extracts the email message
 
@@ -189,7 +255,7 @@ class MailReader():
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Extracts raw email
         FILE_NAMES = []
         for PART in RAW.walk():
@@ -223,7 +289,7 @@ class MailReader():
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
@@ -292,31 +358,30 @@ class MailReader():
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        if self.imap_url.lower() == "imap.gmail.com": # Checks if imap url is from google
-            self.con.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moves mail to trash
-        else:
-           self.con.store(MAIL_ID, '+FLAGS', '\\Deleted')
-        self.con.expunge() # Expunge
+        self.imap.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moves mail to trash
+        
+        self.imap.expunge() # Expunge
         return
 
 
-    def disconnect(self):
-        # Disconnect the client ( Not Nessecary )
+    def logout(self):
+        # Logout
 
-        self.con.close() # Closes client
-        self.con.logout() # Logs out
+        self.imap.close()
+        self.imap.logout()
+        self.logged_in = False
         return
 
 
 def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES=None):
     # Sends Gmail with or without attachemnts
 
-    # Without 2FA:
-    # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
-
     # With 2FA:
     # create a app password and use it instead of the real password
     # at: https://myaccount.google.com/apppasswords
+
+    # Without 2FA:
+    # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
 
     for parameter in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
         if not isinstance(parameter, str):

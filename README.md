@@ -1,4 +1,5 @@
-# Python-Gmail-Module  
+# mailpy  
+
 Easily Send and Receive Mails with Python  
 Conveniently Send and Download Attachements  
   
@@ -13,15 +14,15 @@ you will need to create a [App Password](https://myaccount.google.com/apppasswor
 
 ```  
 Install Latest Release:  
-pip install Python-Gmail-Module  
+pip install mailpy  
   
 Install GitHub Repo:  
-python setup.py install  
+python3 setup.py install  
 ```  
   
 ## About  
 
-Python-Gmail-Module is a Gmail Module made with [Python](https://www.python.org).  
+mailpy is a Gmail Module made with [Python](https://www.python.org).  
   
 - Open-Source  
 - Simple  
@@ -29,5 +30,5 @@ Python-Gmail-Module is a Gmail Module made with [Python](https://www.python.org)
 ## Contributing  
 
 Before creating an issue, please ensure that it hasn't already been reported/suggested.  
-See [the contribution guide](https://github.com/Y4hL/Python-Gmail-Module/blob/master/CONTRIBUTING.md) if you'd like to submit a PR.  
+See [the contribution guide](https://github.com/Y4hL/mailpy/blob/master/CONTRIBUTING.md) if you'd like to submit a PR.  
   

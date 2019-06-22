@@ -1,13 +1,16 @@
-from PGM import MailReader
+from mailpy import Gmail
 
-# PGM Example
+# mailpy Example
 #
 # Delete a Mail
 
 if __name__ == '__main__':
 
     # Initialize Connection
-    Client = MailReader('Gmail Address', 'Gmail Password')
+    Client = Gmail()
+
+    # Login
+    Client.login('Gmail Address', 'Gmail Password')
 
     # Get list of mail ids
     MAIL_IDS = Client.get_mail_ids()
@@ -24,4 +27,4 @@ if __name__ == '__main__':
         Client.delete_mail(MAIL_IDS[0])
 
     # Disconnect Client
-    Client.disconnect()
+    Client.logout()

@@ -4,14 +4,14 @@ from setuptools import setup
 
 
 # Package meta-data.
-NAME = 'Python-Gmail-Module'
-PACKAGES = ['PGM']
+NAME = 'mailpy'
+PACKAGES = ['mailpy']
 DESCRIPTION = 'Easily Send and Receive Mails with Python'
-URL = 'http://github.com/Y4hL/Python-Gmail-Module'
+URL = 'http://github.com/Y4hL/mailpy'
 EMAIL = 'rasmus.kinnunen1@gmail.com'
-AUTHOR = 'Y4hL'
+AUTHOR = 'https://github.com/Y4hL'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.2.0'
+VERSION = '0.0.1'
 
 
 here = os.path.dirname(os.path.abspath(__file__))

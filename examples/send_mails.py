@@ -1,6 +1,6 @@
-from PGM import send_gmail
+from mailpy import send_gmail
 
-# PGM Example
+# mailpy Example
 #
 # Send mails with and without attachments
 

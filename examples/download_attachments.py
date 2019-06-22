@@ -1,8 +1,8 @@
-from PGM import MailReader
+from mailpy import Gmail
 import platform
 import os
 
-# PGM Example
+# mailpy Example
 #
 # Download Attachments with PGM
 
@@ -31,7 +31,10 @@ if __name__ == '__main__':
 
     
     # Initialize Connection
-    Client = MailReader('Gmail Address', 'Gmail Password')
+    Client = Gmail()
+
+    # Login
+    Client.login('Gmail Address', 'Gmail Password')
 
     # Get list of mail ids
     MAIL_IDS = Client.get_mail_ids()
@@ -54,6 +57,6 @@ if __name__ == '__main__':
             Client.get_attachment(MAIL_ID, Attachment, Path)
     
     # Disconnect Client
-    Client.disconnect()
+    Client.logout()
 
     

@@ -1,6 +1,6 @@
-# PGM Examples  
+# mailpy Examples  
   
-These are examples of usage of the [Python-Gmail-Module](https://www.github.com/Y4hL/Python-Gmail-Module) Module.
+These are examples of usage of the [mailpy](https://www.github.com/Y4hL/mailpy) Module.
   
 Make sure to read the examples before running them.  
 Examples also need valid credentials to work correctly.  
