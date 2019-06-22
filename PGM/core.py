@@ -335,7 +335,7 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
         elif isinstance(FILES, list):
             FILES = FILES
         else:
-            raise TypeError("FILE_LOCATION parameter should be a string or list")
+            raise TypeError("FILES parameter should be a string or list")
         
         for FILE in FILES: # Searches for files and appends them to the email
             FILE = str(FILE)
