@@ -31,10 +31,9 @@ class Gmail():
     GMAIL_IMAP_HOST = 'imap.gmail.com'
     GMAIL_IMAP_PORT = 993
     
-    def __init__(self, username : str, password : str, inbox="INBOX"):
-        self.username = username
-        self.password = password
-        self.inbox = inbox
+    def __init__(self):
+        self.username = None
+        self.password = None
 
         self.imap = None
         self.mailbox = None
