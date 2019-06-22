@@ -308,7 +308,7 @@ class MailReader():
         return
 
 
-def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT, MESSAGE : str, FILE_LOCATION=False):
+def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILE_LOCATION=False):
     # Sends Gmail with or without attachemnts
 
     # Without 2FA:
