@@ -4,4 +4,4 @@
 # Ignore build files
 dist/
 build/
-Python_Gmail_Module.egg-info/
+mailpy.egg-info/
