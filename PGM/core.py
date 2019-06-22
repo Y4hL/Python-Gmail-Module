@@ -308,7 +308,7 @@ class MailReader():
         return
 
 
-def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILE_LOCATION=False):
+def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES=None):
     # Sends Gmail with or without attachemnts
 
     # Without 2FA:
@@ -329,11 +329,11 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
 
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
-    if not FILE_LOCATION == False: # Checks for files to append
-        if isinstance (FILE_LOCATION, str):
-            FILES = [FILE_LOCATION]
-        elif isinstance(FILE_LOCATION, list):
-            FILES = FILE_LOCATION
+    if not FILES == None: # Checks for files to append
+        if isinstance (FILES, str):
+            FILES = [FILES]
+        elif isinstance(FILES, list):
+            FILES = FILES
         else:
             raise TypeError("FILE_LOCATION parameter should be a string or list")
         
