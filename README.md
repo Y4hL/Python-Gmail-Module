@@ -5,7 +5,7 @@ Conveniently Send and Download Attachements
   
 ## Setup  
   
-[SMTP Login](https://myaccount.google.com/lesssecureapps) method is not enabled by default.  
+[SMTP and IMAP Login](https://myaccount.google.com/lesssecureapps) method is not enabled by default.  
   
 Alternatively if you have 2fa enabled,  
 you will need to create a [App Password](https://myaccount.google.com/apppasswords)  
