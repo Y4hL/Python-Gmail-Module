@@ -455,7 +455,8 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
         
         # Appends attachments to the email
         for FILE in FILES:
-            FILE = str(FILE)
+            if not isinstance(FILE, str):
+                raise TypeError("'{}' should be a string".format(FILE))
             if not os.path.isfile(FILE): # Check if file exists
                 raise FileNotFoundError("'{}' not found".format(FILE))
             filename = os.path.basename(FILE) # Gets file location
