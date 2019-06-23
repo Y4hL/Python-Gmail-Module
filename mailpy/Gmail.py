@@ -401,10 +401,11 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
         else:
             raise TypeError("FILES parameter should be a string or list")
         
-        for FILE in FILES: # Searches for files and appends them to the email
+        # Appends attachments to the email
+        for FILE in FILES:
             FILE = str(FILE)
             if not os.path.isfile(FILE): # Check if file exists
-                raise FileNotFoundError("'{FILE}' does not exist") # Error if FileNotFound
+                raise FileNotFoundError("'{}' not found".format(FILE))
             filename = os.path.basename(FILE) # Gets file location
             attachment = open(FILE, "rb") # Opens attachment
             part = MIMEBase('application', 'octet-stream') # Creates PART
@@ -421,4 +422,3 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
         smtp.sendmail(USER_EMAIL, RECIPIANT, text) # Sends email
         smtp.quit() # Closes connection
     return
-
