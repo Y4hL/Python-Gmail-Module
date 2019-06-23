@@ -211,11 +211,11 @@ class Gmail():
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
-        _, MAIL_MESSAGE = self.con.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
         return MAIL_MESSAGE
 
 
-    def get_mail(self, MAIL_ID: bytes) -> dict:
+    def get_mail(self, MAIL_ID : bytes) -> dict:
         # Same as list_mails function, but only returns it for one given mail
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -248,7 +248,7 @@ class Gmail():
         return messages # Returns dictionary of all mails
 
 
-    def attachment_state(self, MAIL_ID: bytes) -> list:
+    def attachment_state(self, MAIL_ID : bytes) -> list:
         # Returns empty list if no attachment is found
         # or the file name if one is found
 
@@ -281,7 +281,7 @@ class Gmail():
         return FILE_NAMES
 
 
-    def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME: str, SAVE_PATH : str) -> bool:
+    def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
         # Returns True or False, depending if a attachment was downloaded
         # Attchement_name should be given from the list that you receive
         # from the attachment_state and attachment_state_from_raw functions
