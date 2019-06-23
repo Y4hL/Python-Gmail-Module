@@ -339,7 +339,7 @@ class Gmail():
 
         # Reverse list
         # Therefore mail ids of yet to be deleted mails do not change
-        MAIL_IDS = MAIL_IDS[::-1]
+        MAIL_IDS.reverse()
 
         # Loops through mail IDs
         for MAIL_ID in MAIL_IDS:
