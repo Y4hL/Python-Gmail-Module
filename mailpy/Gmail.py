@@ -109,6 +109,57 @@ class Gmail():
         return
 
 
+    def filter_with_string(self, STRING, SEARCH_ATTACHMENTS=False) -> list:
+        # Filtered email ids by a string
+        # Also has the option to search through attachments
+        # This is disabled by default though
+
+        # CAUTION: Searching through attachments is a security risk
+
+        if not isinstance(STRING, str):
+            raise TypeError
+        
+        FILTERED_MAILS = []
+
+        for MAIL_ID in self.imap.get_mail_ids():
+
+            _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
+            STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+
+            if STRING in EMAIL_MESSAGE['Author']:
+
+                FILTERED_MAILS.append(MAIL_ID)
+                continue
+
+            if STRING in EMAIL_MESSAGE['Subject']:
+
+                FILTERED_MAILS.append(MAIL_ID)
+                continue
+            
+            if STRING in self.imap.get_mail_body_from_raw(MAIL_MESSAGE):
+
+                FILTERED_MAILS.append(MAIL_ID)
+                continue
+            
+            if SEARCH_ATTACHMENTS:
+
+                STATE =  self.imap.attachment_state(MAIL_ID)
+
+                if STATE == False:
+
+                    continue
+                
+                for ATTACHMENT in STATE:
+
+                        if STRING in self.get_attachment_text(MAIL_ID, ATTACHMENT):
+
+                            FILTERED_MAILS.append(MAIL_ID)
+                            break
+
+        return FILTERED_MAILS
+
+
     def filter_by_author(self, AUTHOR : str) -> list:
         # Filters email ids by their authors
 
@@ -279,6 +330,26 @@ class Gmail():
                 continue
             FILE_NAMES.append(PART.get_filename()) # Adds filename to list
         return FILE_NAMES
+
+
+    def get_attachment_text(self, MAIL_ID : bytes, ATTACHMENT_NAME : str) -> str:
+        # Returns attachment content as a string
+
+        self.mail_check(MAIL_ID)
+
+        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
+        for PART in RAW.walk():
+            if PART.get_content_maintype() == "multipype":
+                continue
+            if PART.get("Content-Disposition") is None:
+                continue
+            if ATTACHMENT_NAME != PART.get_filename():
+                continue
+
+            return PART.get_payload(decode=True)
+
+        return False
 
 
     def get_attachment(self, MAIL_ID : bytes, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
