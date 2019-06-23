@@ -337,9 +337,9 @@ class Gmail():
         # Sorts Mail IDs to be in order
         MAIL_IDS.sort()
 
-        # Reverse list, so older mails get deleted first
+        # Reverse list
         # Therefore mail ids of yet to be deleted mails do not change
-        MAIL_IDS = MAIL_IDS[:-1]
+        MAIL_IDS = MAIL_IDS[::-1]
 
         # Loops through mail IDs
         for MAIL_ID in MAIL_IDS:
