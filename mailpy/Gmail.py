@@ -357,20 +357,12 @@ class Gmail():
         # Attchement_name should be given from the list that you receive
         # from the attachment_state and attachment_state_from_raw functions
         
-        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
+        CONTENT = self.get_attachment_text(MAIL_ID, ATTACHMENT_NAME)
 
-        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
-        for PART in RAW.walk():
-            if PART.get_content_maintype() == "multipype":
-                continue
-            if PART.get("Content-Disposition") is None:
-                continue
-            if ATTACHMENT_NAME != PART.get_filename():
-                continue
+        if not CONTENT == False:
 
-            with open(os.path.join(SAVE_PATH, PART.get_filename()), 'wb') as f:
-                f.write(PART.get_payload(decode=True))
+            with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), 'wb') as f:
+                f.write(CONTENT)
             
             return True
         
