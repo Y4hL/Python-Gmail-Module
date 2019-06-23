@@ -144,7 +144,7 @@ class Gmail():
             
             if SEARCH_ATTACHMENTS:
 
-                STATE =  self.imap.attachment_state(MAIL_ID)
+                STATE =  self.imap.attachment_state_from_raw(MAIL_MESSAGE)
 
                 if STATE == False:
 
@@ -303,18 +303,7 @@ class Gmail():
         # Returns empty list if no attachment is found
         # or the file name if one is found
 
-        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
-
-        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Extracts raw email
-        FILE_NAMES = []
-        for PART in RAW.walk():
-            if PART.get_content_maintype() == "multipype":
-                continue
-            if PART.get("Content-Disposition") is None:
-                continue
-            FILE_NAMES.append(PART.get_filename()) # Adds filename to list
-        return FILE_NAMES
+        return self.attachment_state_from_raw(self.get_raw(MAIL_ID))
 
 
     def attachment_state_from_raw(self, MAIL_MESSAGE) -> list:
@@ -381,7 +370,7 @@ class Gmail():
             if ATTACHMENT_NAME != PART.get_filename(): 
                 continue
 
-            with open(os.path.join(SAVE_PATH, PART.get_filename()), "wb") as f:
+            with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), "wb") as f:
                 f.write(PART.get_payload(decode=True))
             
             return True
