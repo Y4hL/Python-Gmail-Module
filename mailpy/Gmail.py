@@ -393,10 +393,7 @@ class Gmail():
         # Loops through mail IDs
         for MAIL_ID in MAIL_IDS:
 
-            # Check that the mail ID is valid
-            self.mail_check(MAIL_ID)
-
-            # Deleted mail
+            # Delete mail
             self.delete_mail(MAIL_ID)
         return
 
