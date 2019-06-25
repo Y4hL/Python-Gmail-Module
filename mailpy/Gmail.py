@@ -152,7 +152,7 @@ class Gmail():
                 
                 for ATTACHMENT in STATE:
 
-                        if STRING in self.get_attachment_text(MAIL_ID, ATTACHMENT):
+                        if STRING in self.get_attachment_text_from_raw(MAIL_MESSAGE, ATTACHMENT):
 
                             FILTERED_MAILS.append(MAIL_ID)
                             break
@@ -321,12 +321,14 @@ class Gmail():
         return FILE_NAMES
 
 
-    def get_attachment_text(self, MAIL_ID : bytes, ATTACHMENT_NAME : str) -> str:
+    def get_attachment_text(self, MAIL_ID : bytes, ATTACHMENT_NAME : str) -> bytes:
         # Returns attachment content as a string
 
-        self.mail_check(MAIL_ID)
+        return self.get_attachment_text_from_raw(self.get_raw(MAIL_ID), ATTACHMENT_NAME)
+    
 
-        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
+    def get_attachment_text_from_raw(self, MAIL_MESSAGE : bytes, ATTACHMENT_NAME : str) -> bytes:
+
         RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
         for PART in RAW.walk():
             if PART.get_content_maintype() == "multipype":
