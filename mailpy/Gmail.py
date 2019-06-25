@@ -363,20 +363,15 @@ class Gmail():
     def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
         # Returns True or False, depending if a attachment was downloaded
         
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1])  # Exracts raw email
-        for PART in RAW.walk():
-            if PART.get_content_maintype() == "multipype":
-                continue
-            if PART.get("Content-Disposition") is None:
-                continue
-            if ATTACHMENT_NAME != PART.get_filename(): 
-                continue
+        CONTENT = self.get_attachment_text_from_raw(MAIL_MESSAGE, ATTACHMENT_NAME)
 
-            with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), "wb") as f:
-                f.write(PART.get_payload(decode=True))
+        if not CONTENT == False:
+
+            with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), 'wb') as f:
+                f.write(CONTENT)
             
             return True
-            
+        
         return False
 
     
