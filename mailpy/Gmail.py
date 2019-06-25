@@ -164,7 +164,7 @@ class Gmail():
         # Filters email ids by their authors
 
         if not isinstance(AUTHOR, str):
-            raise TypeError("AUTHOR should be a string.")
+            raise TypeError
 
         FILTERED_MAILS = []
 
