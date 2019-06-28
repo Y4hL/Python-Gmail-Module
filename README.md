@@ -17,6 +17,7 @@ Install Latest Release:
 pip install mailpy  
   
 Install GitHub Repo:  
+git clone https://github.com/Y4hL/mailpy.git  
 python3 setup.py install  
 ```  
   
