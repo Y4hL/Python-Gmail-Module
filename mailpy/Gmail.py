@@ -92,7 +92,7 @@ class Gmail():
         return
 
 
-    def create_mailbox(self, mailbox_name):
+    def create_mailbox(self, mailbox_name : str):
 
         if not mailbox_name in self.mailboxes:
             self.imap.create(mailbox_name)
@@ -101,7 +101,7 @@ class Gmail():
             raise MailboxExists
         return
 
-    def delete_mailbox(self, mailbox_name):
+    def delete_mailbox(self, mailbox_name : str):
         
         if mailbox_name in self.mailboxes:
             self.mailboxes.remove(mailbox_name)
@@ -109,7 +109,7 @@ class Gmail():
         return
 
 
-    def filter_with_string(self, STRING, SEARCH_ATTACHMENTS=False) -> list:
+    def filter_with_string(self, STRING : str, SEARCH_ATTACHMENTS=False) -> list:
         # Filtered email ids by a string
         # Also has the option to search through attachments
         # This is disabled by default though
