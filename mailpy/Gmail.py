@@ -264,11 +264,11 @@ class Gmail():
         for MAIL_ID in MAIL_ID_LIST: # Loops through all mail ids
             _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE) # Extracts the email message
+            MAIL = email.message_from_string(STR_MESSAGE) # Extracts the email message
 
             BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets the Email Body
 
-            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])))
+            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, MAIL['Subject'], MAIL['From'], MAIL['Date'], MAIL['To'], BODY])))
         
         return messages # Returns dictionary of all mails
 
