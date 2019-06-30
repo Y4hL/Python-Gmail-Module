@@ -39,6 +39,7 @@ class Gmail():
         self.mailbox = None
         self.mailboxes = None
         self.logged_in = False
+        self.MAIL_IDS = None
 
 
     def _connect_imap(self):
@@ -70,6 +71,7 @@ class Gmail():
             raise AuthenticationError
         # Use 'INBOX' mailbox by default
         self.use_mailbox('INBOX')
+        self.get_mail_ids()
         return self.logged_in
 
 
@@ -118,10 +120,10 @@ class Gmail():
 
         if not isinstance(STRING, str):
             raise TypeError
-        
+
         FILTERED_MAILS = []
 
-        for MAIL_ID in self.imap.get_mail_ids():
+        for MAIL_ID in self.MAIL_IDS:
 
             _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
@@ -154,7 +156,7 @@ class Gmail():
 
         FILTERED_MAILS = []
 
-        for MAIL_ID in self.get_mail_ids(): # Loops through mail_id list
+        for MAIL_ID in self.MAIL_IDS: # Loops through mail_id list
 
             if AUTHOR in self.get_mail_author(MAIL_ID): # Check if the given author is in the author
 
@@ -169,8 +171,10 @@ class Gmail():
 
         MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
         if MAIL_ID_STR == b'': # checks if there are no mails
-            return [] # returns empty list
-        return MAIL_ID_STR.split(b' ') # returns list of mail ids
+            self.MAIL_IDS = []
+            return self.MAIL_IDS # returns empty list
+        self.MAIL_IDS = MAIL_ID_STR.split(b' ')
+        return self.MAIL_IDS # returns list of mail ids
 
 
     def mail_check(self, MAIL_ID : bytes):
@@ -179,7 +183,7 @@ class Gmail():
         if not isinstance(MAIL_ID, bytes):
             raise TypeError("MAIL_ID should be a bytes object")
 
-        if not MAIL_ID in self.get_mail_ids():
+        if not MAIL_ID in self.MAIL_IDS:
             raise ValueError("Invalid MAIL_ID")
         return
 
@@ -241,7 +245,7 @@ class Gmail():
 
 
     def get_mail(self, MAIL_ID : bytes) -> dict:
-        # Same as list_mails function, but only returns it for one given mail
+        # Returns dictionary with info about a mail
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
@@ -257,18 +261,11 @@ class Gmail():
     def list_mails(self) -> list:
         # returns a list of dictionaries ( each dictionary is a mail )
 
-        MAIL_ID_LIST = self.get_mail_ids() # Gets all mail_ids
-
         messages = []
 
-        for MAIL_ID in MAIL_ID_LIST: # Loops through all mail ids
-            _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches mail by its id
-            STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-            MAIL = email.message_from_string(STR_MESSAGE) # Extracts the email message
+        for MAIL_ID in self.MAIL_IDS: # Loops through all mail ids
 
-            BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets the Email Body
-
-            messages.append(dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, MAIL['Subject'], MAIL['From'], MAIL['Date'], MAIL['To'], BODY])))
+            messages.append(self.get_mail(MAIL_ID))
         
         return messages # Returns dictionary of all mails
 
@@ -371,6 +368,10 @@ class Gmail():
         self.imap.store(MAIL_ID, '+X-GM-LABELS', '\\Trash') # Moves mail to trash
         
         self.imap.expunge() # Expunge
+
+        # Refresh self.MAIL_IDS
+        self.get_mail_ids()
+        
         return
 
 
