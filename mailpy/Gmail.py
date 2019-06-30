@@ -87,8 +87,8 @@ class Gmail():
     def use_mailbox(self, MAILBOX : str):
         # Allows changing of the mailbox
 
-        self.mailbox = MAILBOX
         self.imap.select(MAILBOX)
+        self.mailbox = MAILBOX
         return
 
 
@@ -104,8 +104,8 @@ class Gmail():
     def delete_mailbox(self, mailbox_name : str):
         
         if mailbox_name in self.mailboxes:
-            self.mailboxes.remove(mailbox_name)
             self.imap.delete(mailbox_name)
+            self.mailboxes.remove(mailbox_name)
         return
 
 
@@ -125,19 +125,9 @@ class Gmail():
 
             _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-            EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+            MAIL = email.message_from_string(STR_MESSAGE)
 
-            if STRING in EMAIL_MESSAGE['Author']:
-
-                FILTERED_MAILS.append(MAIL_ID)
-                continue
-
-            if STRING in EMAIL_MESSAGE['Subject']:
-
-                FILTERED_MAILS.append(MAIL_ID)
-                continue
-            
-            if STRING in self.imap.get_mail_body_from_raw(MAIL_MESSAGE):
+            if STRING in MAIL['Author'] or STRING in MAIL['Subject'] or STRING in self.imap.get_mail_body_from_raw(MAIL_MESSAGE):
 
                 FILTERED_MAILS.append(MAIL_ID)
                 continue
@@ -145,10 +135,6 @@ class Gmail():
             if SEARCH_ATTACHMENTS:
 
                 STATE =  self.imap.attachment_state_from_raw(MAIL_MESSAGE)
-
-                if STATE == False:
-
-                    continue
                 
                 for ATTACHMENT in STATE:
 
@@ -178,7 +164,7 @@ class Gmail():
 
 
     def get_mail_ids(self) -> list:
-        # Gets a list of all mail ids in a inbox
+        # Gets a list of all mail ids
         _, LATEST_DATA = self.imap.search(None, "ALL")
 
         MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
@@ -193,8 +179,7 @@ class Gmail():
         if not isinstance(MAIL_ID, bytes):
             raise TypeError("MAIL_ID should be a bytes object")
 
-        MAIL_IDS = self.get_mail_ids()
-        if not MAIL_ID in MAIL_IDS:
+        if not MAIL_ID in self.get_mail_ids():
             raise ValueError("Invalid MAIL_ID")
         return
 
@@ -204,8 +189,8 @@ class Gmail():
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE['From'] # Returns Email Author
+        MAIL = email.message_from_string(STR_MESSAGE)
+        return MAIL['From'] # Returns Email Author
 
 
     def get_mail_subject(self, MAIL_ID : bytes) -> str:
@@ -213,8 +198,8 @@ class Gmail():
 
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE['Subject'] # Returns Email Subject
+        MAIL = email.message_from_string(STR_MESSAGE)
+        return MAIL['Subject'] # Returns Email Subject
 
 
     def get_mail_date(self, MAIL_ID : bytes) -> str:
@@ -222,25 +207,14 @@ class Gmail():
         
         MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
-        return EMAIL_MESSAGE['Date'] # Returns Email Date
+        MAIL = email.message_from_string(STR_MESSAGE)
+        return MAIL['Date'] # Returns Email Date
 
 
     def get_mail_body(self, MAIL_ID : bytes) -> str:
         # Gets the body of a given MAIL_ID
 
-        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
-
-        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
-        RAW = email.message_from_bytes(MAIL_MESSAGE[0][1]) # Exracts mail from raw format
-        for PART in RAW.walk():
-            if PART.get_content_type() == 'text/plain':
-                BODY = PART.get_payload()
-                try:
-                    BODY = base64.b64decode(BODY).decode()
-                except Exception:
-                    pass
-                return BODY
+        return self.get_mail_body_from_raw(self.get_raw(MAIL_ID))
 
 
     def get_mail_body_from_raw(self, MAIL_MESSAGE) -> str:
@@ -273,11 +247,11 @@ class Gmail():
         
         _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)")
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        EMAIL_MESSAGE = email.message_from_string(STR_MESSAGE)
+        MAIL = email.message_from_string(STR_MESSAGE)
 
         BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
 
-        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, EMAIL_MESSAGE['Subject'], EMAIL_MESSAGE['From'], EMAIL_MESSAGE['Date'], EMAIL_MESSAGE['To'], BODY])) # Combines values into dict
+        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, MAIL['Subject'], MAIL['From'], MAIL['Date'], MAIL['To'], BODY])) # Combines values into dict
 
 
     def list_mails(self) -> list:
@@ -348,16 +322,7 @@ class Gmail():
         # Attchement_name should be given from the list that you receive
         # from the attachment_state and attachment_state_from_raw functions
         
-        CONTENT = self.get_attachment_text(MAIL_ID, ATTACHMENT_NAME)
-
-        if not CONTENT == False:
-
-            with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), 'wb') as f:
-                f.write(CONTENT)
-            
-            return True
-        
-        return False
+        return self.get_attachment_from_raw(self.get_raw(MAIL_ID), ATTACHMENT_NAME, SAVE_PATH)
 
 
     def get_attachment_from_raw(self, MAIL_MESSAGE, ATTACHMENT_NAME : str, SAVE_PATH : str) -> bool:
@@ -365,7 +330,7 @@ class Gmail():
         
         CONTENT = self.get_attachment_text_from_raw(MAIL_MESSAGE, ATTACHMENT_NAME)
 
-        if not CONTENT == False:
+        if CONTENT:
 
             with open(os.path.join(SAVE_PATH, ATTACHMENT_NAME), 'wb') as f:
                 f.write(CONTENT)
