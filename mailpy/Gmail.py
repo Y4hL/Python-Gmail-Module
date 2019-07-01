@@ -406,7 +406,7 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
     if FILES: # Checks for files to append
-        if isinstance (FILES, list):
+        if isinstance(FILES, list):
             pass
         elif isinstance(FILES, str):
             FILES = [FILES]
