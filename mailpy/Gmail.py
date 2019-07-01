@@ -111,7 +111,7 @@ class Gmail():
         return
 
 
-    def filter_with_string(self, STRING : str, SEARCH_ATTACHMENTS=False) -> list:
+    def filter_with_string(self, STRING : str, SEARCH_ATTACHMENTS : bool = False) -> list:
         # Filtered email ids by a string
         # Also has the option to search through attachments
         # This is disabled by default though
