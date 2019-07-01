@@ -31,7 +31,7 @@ class Gmail():
     GMAIL_IMAP_HOST = 'imap.gmail.com'
     GMAIL_IMAP_PORT = 993
     
-    def __init__(self):
+    def __init__(self) -> None:
         self.username = None
         self.password = None
 
@@ -42,7 +42,7 @@ class Gmail():
         self.MAIL_IDS = None
 
 
-    def _connect_imap(self):
+    def _connect_imap(self) -> None:
 
         self.imap = imaplib.IMAP4_SSL(
             self.GMAIL_IMAP_HOST, self.GMAIL_IMAP_PORT)
@@ -86,7 +86,7 @@ class Gmail():
             return self.mailboxes
 
 
-    def use_mailbox(self, MAILBOX : str):
+    def use_mailbox(self, MAILBOX : str) -> None:
         # Allows changing of the mailbox
 
         self.imap.select(MAILBOX)
@@ -94,7 +94,7 @@ class Gmail():
         return
 
 
-    def create_mailbox(self, mailbox_name : str):
+    def create_mailbox(self, mailbox_name : str) -> None:
 
         if not mailbox_name in self.mailboxes:
             self.imap.create(mailbox_name)
@@ -103,7 +103,7 @@ class Gmail():
             raise MailboxExists
         return
 
-    def delete_mailbox(self, mailbox_name : str):
+    def delete_mailbox(self, mailbox_name : str) -> None:
         
         if mailbox_name in self.mailboxes:
             self.imap.delete(mailbox_name)
@@ -177,7 +177,7 @@ class Gmail():
         return self.MAIL_IDS # returns list of mail ids
 
 
-    def mail_check(self, MAIL_ID : bytes):
+    def mail_check(self, MAIL_ID : bytes) -> None:
         # Check if a mail_id is valid
 
         if not isinstance(MAIL_ID, bytes):
@@ -337,7 +337,7 @@ class Gmail():
         return False
 
     
-    def delete_mails(self, MAIL_IDS : list):
+    def delete_mails(self, MAIL_IDS : list) -> None:
         # This should be used to delete multiple mails at once,
         # since deleting a mail can change the mail ID of other mails
 
@@ -360,7 +360,7 @@ class Gmail():
         return
 
 
-    def delete_mail(self, MAIL_ID : bytes):
+    def delete_mail(self, MAIL_ID : bytes) -> None:
         # Delete a specific mail by mail_id
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
@@ -375,7 +375,7 @@ class Gmail():
         return
 
 
-    def logout(self):
+    def logout(self) -> None:
         # Logout
 
         self.imap.close()
@@ -384,7 +384,7 @@ class Gmail():
         return
 
 
-def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES=None):
+def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES : list = None) -> None:
     # Sends Gmail with or without attachemnts
 
     # With 2FA:
