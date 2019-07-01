@@ -49,7 +49,7 @@ class Gmail():
         return
 
 
-    def _login_imap(self, username, password) -> bool:
+    def _login_imap(self, username : str, password : str) -> bool:
 
         if not self.imap:
             self._connect_imap()
@@ -60,7 +60,7 @@ class Gmail():
         return self.logged_in
 
 
-    def login(self, username, password) -> bool:
+    def login(self, username : str, password : str) -> bool:
 
         self.username = username
         self.password = password
