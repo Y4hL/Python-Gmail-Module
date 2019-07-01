@@ -192,8 +192,7 @@ class Gmail():
         # Get MAIL
 
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
-        MAIL = email.message_from_string(STR_MESSAGE)
-        return MAIL
+        return email.message_from_string(STR_MESSAGE)
 
 
     def get_mail_author(self, MAIL_ID : bytes) -> str:
