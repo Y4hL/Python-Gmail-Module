@@ -405,11 +405,11 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
 
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
-    if not FILES == None: # Checks for files to append
-        if isinstance (FILES, str):
+    if FILES: # Checks for files to append
+        if isinstance (FILES, list):
+            pass
+        elif isinstance(FILES, str):
             FILES = [FILES]
-        elif isinstance(FILES, list):
-            FILES = FILES
         else:
             raise TypeError("FILES parameter should be a string or list")
         
