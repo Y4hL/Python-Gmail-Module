@@ -188,31 +188,30 @@ class Gmail():
         return
 
 
+    def get_mail_x_from_raw(self, MAIL_MESSAGE, X : str) -> str:
+        # Get x from MAIL
+
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
+        MAIL = email.message_from_string(STR_MESSAGE)
+        return MAIL[X]
+
+
     def get_mail_author(self, MAIL_ID : bytes) -> str:
         # Return the author of a specific email
         
-        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        MAIL = email.message_from_string(STR_MESSAGE)
-        return MAIL['From'] # Returns Email Author
+        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID), 'From') # Returns Email Author
 
 
     def get_mail_subject(self, MAIL_ID : bytes) -> str:
         # Return the subject of a specific email
 
-        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        MAIL = email.message_from_string(STR_MESSAGE)
-        return MAIL['Subject'] # Returns Email Subject
+        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID), 'Subject') # Returns Email Subject
 
 
     def get_mail_date(self, MAIL_ID : bytes) -> str:
         # Return the date of a specific email
         
-        MAIL_MESSAGE = self.get_raw(MAIL_ID) # Gets the raw email by its id
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
-        MAIL = email.message_from_string(STR_MESSAGE)
-        return MAIL['Date'] # Returns Email Date
+        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID), 'Date') # Returns Email Date
 
 
     def get_mail_body(self, MAIL_ID : bytes) -> str:
