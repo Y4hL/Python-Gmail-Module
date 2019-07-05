@@ -143,7 +143,7 @@ class Gmail():
         for MAIL_ID in self.MAIL_IDS:
 
             _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
-            STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+            STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
             MAIL = email.message_from_string(STR_MESSAGE)
 
             if STRING in MAIL['Author'] or STRING in MAIL['Subject'] or STRING in self.imap.get_mail_body_from_raw(MAIL_MESSAGE):
@@ -265,7 +265,7 @@ class Gmail():
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
         _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)")
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode("utf-8")
+        STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
         MAIL = email.message_from_string(STR_MESSAGE)
 
         BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
