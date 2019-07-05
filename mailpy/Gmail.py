@@ -1,4 +1,9 @@
 # mailpy
+#
+# Copyright (C) Rasmus Kinnunen <rasmus.kinnunen1@gmail.com>
+#
+# Released under the terms of the GNU GPL 3.0
+#
 
 # GitHub:
 # https://github.com/Y4hL/mailpy/
@@ -12,11 +17,23 @@ import email
 import base64
 import imaplib
 import smtplib
-from .exceptions import *
 from email import encoders
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
+
+
+# Exceptions
+class GmailException(RuntimeError):
+    """There was an ambiguous exception that occurred while handling your
+    request."""
+
+class AuthenticationError(GmailException):
+    """Gmail Authentication failed."""
+
+class MailboxExists(GmailException):
+    """Mailbox already exists"""
+
 
 class Gmail():
 
