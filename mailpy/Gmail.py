@@ -58,6 +58,9 @@ class Gmail():
         self.logged_in = False
         self.MAIL_IDS = None
 
+        # Options
+        self.LOW_NETWORK_USAGE = False
+
 
     def _connect_imap(self) -> None:
 
@@ -88,7 +91,8 @@ class Gmail():
             raise AuthenticationError
         # Use 'INBOX' mailbox by default
         self.use_mailbox('INBOX')
-        self.get_mail_ids()
+        if self.LOW_NETWORK_USAGE:
+            self.get_mail_ids()
         return self.logged_in
 
 
@@ -140,7 +144,7 @@ class Gmail():
 
         FILTERED_MAILS = []
 
-        for MAIL_ID in self.MAIL_IDS:
+        for MAIL_ID in self._MAIL_IDS():
 
             _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
@@ -173,13 +177,21 @@ class Gmail():
 
         FILTERED_MAILS = []
 
-        for MAIL_ID in self.MAIL_IDS: # Loops through mail_id list
+        for MAIL_ID in self._MAIL_IDS(): # Loops through mail_id list
 
             if AUTHOR in self.get_mail_author(MAIL_ID): # Check if the given author is in the author
 
                 FILTERED_MAILS.append(MAIL_ID) # Appends filtered mail_id to list
 
         return FILTERED_MAILS
+
+
+    def _MAIL_IDS(self):
+        # MAIL_IDS Cache Fetcher
+
+        if LOW_NETWORK_USAGE:
+            return self.MAIL_IDS
+        return self.get_mail_ids()
 
 
     def get_mail_ids(self) -> list:
@@ -200,7 +212,7 @@ class Gmail():
         if not isinstance(MAIL_ID, bytes):
             raise TypeError("MAIL_ID should be a bytes object")
 
-        if not MAIL_ID in self.MAIL_IDS:
+        if not MAIL_ID in self._MAIL_IDS():
             raise ValueError("Invalid MAIL_ID")
         return
 
@@ -281,7 +293,7 @@ class Gmail():
 
         messages = []
 
-        for MAIL_ID in self.MAIL_IDS: # Loops through all mail ids
+        for MAIL_ID in self._MAIL_IDS(): # Loops through all mail ids
 
             messages.append(self.get_mail(MAIL_ID))
         
@@ -387,8 +399,9 @@ class Gmail():
         
         self.imap.expunge() # Expunge
 
-        # Refresh self.MAIL_IDS
-        self.get_mail_ids()
+        # Refresh MAIL_IDS in LOW_NETWORK_USAGE
+        if self.LOW_NETWORK_USAGE:
+            self.get_mail_ids()
         
         return
 
