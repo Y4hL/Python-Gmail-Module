@@ -425,8 +425,8 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
     # Without 2FA:
     # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
 
-    for parameter in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
-        if not isinstance(parameter, str):
+    for PARAM in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
+        if not isinstance(PARAM, str):
             raise TypeError
 
     msg = MIMEMultipart()
@@ -437,17 +437,12 @@ def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str,
     msg.attach(MIMEText(MESSAGE, 'plain'))
 
     if FILES: # Checks for files to append
-        if isinstance(FILES, list):
-            pass
-        elif isinstance(FILES, str):
-            FILES = [FILES]
-        else:
-            raise TypeError("FILES parameter should be a string or list")
-        
+        if not isinstance(FILES, list):
+            raise TypeError('FILES should be a list')
         # Appends attachments to the email
         for FILE in FILES:
             if not isinstance(FILE, str):
-                raise TypeError("'{}' should be a string".format(FILE))
+                raise TypeError('FILES list should only contain strings')
             if not os.path.isfile(FILE): # Check if file exists
                 raise FileNotFoundError("'{}' not found".format(FILE))
             filename = os.path.basename(FILE) # Gets file location
