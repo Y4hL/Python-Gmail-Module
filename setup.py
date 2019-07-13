@@ -10,7 +10,7 @@ DESCRIPTION = 'Easily Send and Receive Mails with Python'
 URL = 'http://github.com/Y4hL/mailpy'
 EMAIL = 'rasmus.kinnunen1@gmail.com'
 AUTHOR = 'https://github.com/Y4hL'
-REQUIRES_PYTHON = '>=3.6.0'
+REQUIRES_PYTHON = '>=3.4.0'
 VERSION = '0.0.3'
 
 
@@ -50,9 +50,7 @@ setup(
     tests_require=[],
     include_package_data=True,
     python_requires=REQUIRES_PYTHON,
-    setup_requires=['setuptools>=38.6.0', 
-                    'wheel>=0.31.0', 
-                    'twine>=1.11.0'],
+    # setup_requires=[],
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
