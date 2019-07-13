@@ -205,11 +205,13 @@ class Gmail():
         return
 
 
-    def get_mail_x_from_raw(self, MAIL_MESSAGE) -> str:
+    def get_mail_from_raw(self, MAIL_MESSAGE) -> str:
         # Get MAIL
 
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
-        return email.message_from_string(STR_MESSAGE)
+        MAIL = email.message_from_string(STR_MESSAGE)
+        MAIL['Body'] = self.get_mail_body_from_raw(MAIL_MESSAGE)
+        return MAIL
 
 
     def get_mail_author(self, MAIL_ID : bytes) -> str:
@@ -268,9 +270,10 @@ class Gmail():
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
         MAIL = email.message_from_string(STR_MESSAGE)
 
-        BODY = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
+        MAIL['ID'] = MAIL_ID
+        MAIL['Body'] = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
 
-        return dict(zip(["Id", "Subject", "From", "Date", "To", "Body"], [MAIL_ID, MAIL['Subject'], MAIL['From'], MAIL['Date'], MAIL['To'], BODY])) # Combines values into dict
+        return MAIL
 
 
     def list_mails(self) -> list:
