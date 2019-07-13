@@ -189,8 +189,8 @@ class Gmail():
         MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
         if MAIL_ID_STR == b'': # checks if there are no mails
             self.MAIL_IDS = []
-            return self.MAIL_IDS # returns empty list
-        self.MAIL_IDS = MAIL_ID_STR.split(b' ')
+        else:
+            self.MAIL_IDS = MAIL_ID_STR.split(b' ')
         return self.MAIL_IDS # returns list of mail ids
 
 
