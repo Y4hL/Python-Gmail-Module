@@ -189,7 +189,7 @@ class Gmail():
     def _MAIL_IDS(self):
         # MAIL_IDS Cache Fetcher
 
-        if LOW_NETWORK_USAGE:
+        if LOW_NETWORK_USAGE and self.MAIL_IDS != None:
             return self.MAIL_IDS
         return self.get_mail_ids()
 
