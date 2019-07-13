@@ -10,7 +10,7 @@ DESCRIPTION = 'Easily Send and Receive Mails with Python'
 URL = 'http://github.com/Y4hL/mailpy'
 EMAIL = 'rasmus.kinnunen1@gmail.com'
 AUTHOR = 'https://github.com/Y4hL'
-REQUIRES_PYTHON = '>=3.4.0'
+REQUIRES_PYTHON = '>=3.5.0'
 VERSION = '0.0.3'
 
 
