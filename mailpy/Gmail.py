@@ -146,7 +146,7 @@ class Gmail():
 
         for MAIL_ID in self._MAIL_IDS():
 
-            _, MAIL_MESSAGE = self.get_raw(MAIL_ID)
+            MAIL_MESSAGE = self.get_raw(MAIL_ID)
             STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
             MAIL = email.message_from_string(STR_MESSAGE)
 
