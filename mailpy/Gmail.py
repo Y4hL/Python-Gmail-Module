@@ -217,19 +217,19 @@ class Gmail():
     def get_mail_author(self, MAIL_ID : bytes) -> str:
         # Return the author of a specific email
         
-        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID))['From'] # Returns Email Author
+        return self.get_mail_from_raw(self.get_raw(MAIL_ID))['From'] # Returns Email Author
 
 
     def get_mail_subject(self, MAIL_ID : bytes) -> str:
         # Return the subject of a specific email
 
-        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID))['Subject'] # Returns Email Subject
+        return self.get_mail_from_raw(self.get_raw(MAIL_ID))['Subject'] # Returns Email Subject
 
 
     def get_mail_date(self, MAIL_ID : bytes) -> str:
         # Return the date of a specific email
         
-        return self.get_mail_x_from_raw(self.get_raw(MAIL_ID))['Date'] # Returns Email Date
+        return self.get_mail_from_raw(self.get_raw(MAIL_ID))['Date'] # Returns Email Date
 
 
     def get_mail_body(self, MAIL_ID : bytes) -> str:
