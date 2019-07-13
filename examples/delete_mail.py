@@ -19,7 +19,7 @@ if __name__ == '__main__':
     if MAIL_IDS != []:
 
         # Deletes latest mail
-        Client.delete_mail(MAIL_IDS[0])
+        Client.delete_mail(MAIL_IDS[-1])
 
     # Disconnect Client
     Client.logout()
