@@ -47,6 +47,10 @@ class Gmail():
     # Gmail IMAP defaults
     GMAIL_IMAP_HOST = 'imap.gmail.com'
     GMAIL_IMAP_PORT = 993
+
+    # Gmail SMTP defaults
+    GMAIL_SMTP_HOST = 'smtp.gmail.com'
+    GMAIL_SMTP_PORT = 465
     
     def __init__(self) -> None:
         self.username = None
@@ -415,48 +419,44 @@ class Gmail():
         return
 
 
-def send_gmail(USER_EMAIL : str, PASSWORD : str, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES : list = None) -> None:
-    # Sends Gmail with or without attachemnts
+    def send(RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES : list = None) -> None:
+        # Sends Gmail with or without attachemnts
 
-    # With 2FA:
-    # create a app password and use it instead of the real password
-    # at: https://myaccount.google.com/apppasswords
+        if self.username == None or self.password == None:
+            raise AuthenticationError('Log in first')
 
-    # Without 2FA:
-    # Activate less secure apps to use, at: https://myaccount.google.com/lesssecureapps
+        for PARAM in [RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
+            if not isinstance(PARAM, str):
+                raise TypeError
 
-    for PARAM in [USER_EMAIL, PASSWORD, RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
-        if not isinstance(PARAM, str):
-            raise TypeError
+        msg = MIMEMultipart()
+        msg['From'] = self.username
+        msg['To'] = RECIPIANT
+        msg['Subject'] = SUBJECT
 
-    msg = MIMEMultipart()
-    msg['From'] = USER_EMAIL
-    msg['To'] = RECIPIANT
-    msg['Subject'] = SUBJECT
+        msg.attach(MIMEText(MESSAGE, 'plain'))
 
-    msg.attach(MIMEText(MESSAGE, 'plain'))
+        if FILES: # Checks for files to append
+            if not isinstance(FILES, list):
+                raise TypeError('FILES should be a list')
+            # Appends attachments to the email
+            for FILE in FILES:
+                if not isinstance(FILE, str):
+                    raise TypeError('FILES list should only contain strings')
+                if not os.path.isfile(FILE): # Check if file exists
+                    raise FileNotFoundError("'{}' not found".format(FILE))
+                filename = os.path.basename(FILE) # Gets file location
+                attachment = open(FILE, "rb") # Opens attachment
+                part = MIMEBase('application', 'octet-stream') # Creates PART
+                part.set_payload((attachment).read()) # Attaches payload to PART
+                encoders.encode_base64(part) # base64 encodes the PART
+                part.add_header('Content-Disposition', "attachment; filename= %s" % filename) # Adds Header to PART
 
-    if FILES: # Checks for files to append
-        if not isinstance(FILES, list):
-            raise TypeError('FILES should be a list')
-        # Appends attachments to the email
-        for FILE in FILES:
-            if not isinstance(FILE, str):
-                raise TypeError('FILES list should only contain strings')
-            if not os.path.isfile(FILE): # Check if file exists
-                raise FileNotFoundError("'{}' not found".format(FILE))
-            filename = os.path.basename(FILE) # Gets file location
-            attachment = open(FILE, "rb") # Opens attachment
-            part = MIMEBase('application', 'octet-stream') # Creates PART
-            part.set_payload((attachment).read()) # Attaches payload to PART
-            encoders.encode_base64(part) # base64 encodes the PART
-            part.add_header('Content-Disposition', "attachment; filename= %s" % filename) # Adds Header to PART
+                msg.attach(part) # Attaches PART to mail
 
-            msg.attach(part) # Attaches PART to mail
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp: # Creates encrypted connection
-        smtp.login(USER_EMAIL, PASSWORD) # Logs in
-        text = msg.as_string() # Stores mail as string
-        smtp.sendmail(USER_EMAIL, RECIPIANT, text) # Sends email
-        smtp.quit() # Closes connection
-    return
+        with smtplib.SMTP_SSL(self.GMAIL_SMTP_HOST, self.GMAIL_SMTP_PORT) as smtp: # Creates encrypted connection
+            smtp.login(self.username, self.password) # Logs in
+            text = msg.as_string() # Stores mail as string
+            smtp.sendmail(self.username, RECIPIANT, text) # Sends email
+            smtp.quit() # Closes connection
+        return
