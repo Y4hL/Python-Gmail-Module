@@ -24,4 +24,4 @@ if __name__ == '__main__':
     Client.send('Recipiant Email Address', 'Subject', 'Body', FILE_LOCATION=ATTACHMENTS)
 
     # Close connection
-    Client.quit()
+    Client.logout()
