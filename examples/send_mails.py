@@ -1,4 +1,4 @@
-from mailpy import send_gmail
+from mailpy import Gmail
 
 # mailpy Example
 #
@@ -6,8 +6,12 @@ from mailpy import send_gmail
 
 if __name__ == '__main__':
 
+    Client = Gmail()
+
+    Client.login('Gmail Address', 'Gmail Password')
+
     # Mail without attachment
-    send_gmail('Gmail Address', 'Gmail Password', 'Recipiant Email Address', 'Subject', 'Body')
+    Client.send('Recipiant Email Address', 'Subject', 'Body')
 
     # Give Attachements with Paths
     ATTACHMENTS = ['MyPath/File.txt', 'MyPath/File2.pdf']
@@ -17,4 +21,7 @@ if __name__ == '__main__':
     # For Example: File.exe
 
     # Send Mail with Attachments
-    send_gmail('Gmail Address', 'Gmail Password', 'Recipiant Email Address', 'Subject', 'Body', FILE_LOCATION=ATTACHMENTS)
+    Client.send('Recipiant Email Address', 'Subject', 'Body', FILE_LOCATION=ATTACHMENTS)
+
+    # Close connection
+    Client.quit()
