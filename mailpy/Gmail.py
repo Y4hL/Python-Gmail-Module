@@ -416,6 +416,8 @@ class Gmail():
         self.imap.close()
         self.imap.logout()
         self.logged_in = False
+        self.username = None
+        self.password = None
         return
 
 
