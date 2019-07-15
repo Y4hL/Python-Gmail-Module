@@ -304,7 +304,7 @@ class Gmail():
         # Returns dictionary with info about a mail
         
         MAIL = self.get_mail_from_raw(self.get_raw(MAIL_ID)
-        MAIL['ID'] = MAIL_ID
+        MAIL["ID"] = MAIL_ID
 
         return MAIL
 
