@@ -292,7 +292,7 @@ class Gmail():
         # Gets the raw email
 
         if not self.imap:
-            raise AuthenticationError('You aren't logged in')
+            raise AuthenticationError("You aren't logged in")
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
