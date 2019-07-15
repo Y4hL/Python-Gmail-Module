@@ -302,15 +302,9 @@ class Gmail():
 
     def get_mail(self, MAIL_ID : bytes) -> dict:
         # Returns dictionary with info about a mail
-
-        self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
-        MAIL_MESSAGE = self.get_raw(MAIL_ID)
-        STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
-        MAIL = email.message_from_string(STR_MESSAGE)
-
+        MAIL = self.get_mail_from_raw(self.get_raw(MAIL_ID)
         MAIL['ID'] = MAIL_ID
-        MAIL['Body'] = self.get_mail_body_from_raw(MAIL_MESSAGE) # Gets Email Body
 
         return MAIL
 
