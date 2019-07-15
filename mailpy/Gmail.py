@@ -92,7 +92,7 @@ class Gmail():
         try:
             self._login_imap(self.username, self.password)
         except imaplib.IMAP4.error:
-            raise AuthenticationError
+            raise AuthenticationError('Invalid credentials')
         # Use 'INBOX' mailbox by default
         self.use_mailbox('INBOX')
         if self.LOW_NETWORK_USAGE:
@@ -101,7 +101,12 @@ class Gmail():
 
 
     def fetch_mailboxes(self) -> list:
+
+        if not self.imap:
+            raise AuthenticationError("You aren't logged in')
+
         response, mailbox_list = self.imap.list()
+
         if response == 'OK':
             self.mailboxes = []
             for mailbox in mailbox_list:
@@ -109,10 +114,15 @@ class Gmail():
                     b'"/"')[-1].replace(b'"', b'').strip()
                 self.mailboxes.append(mailbox_name)
             return self.mailboxes
+        else:
+            raise GmailException('Failed to fetch inboxes')
 
 
     def use_mailbox(self, MAILBOX : str) -> None:
         # Allows changing of the mailbox
+
+        if not self.imap:
+            raise AuthenticationError ("You aren't logged in")
 
         self.imap.select(MAILBOX)
         self.mailbox = MAILBOX
@@ -120,6 +130,9 @@ class Gmail():
 
 
     def create_mailbox(self, mailbox_name : str) -> None:
+
+        if not self.imap:
+            raise AuthenticationError("You aren't logged in")
 
         if not mailbox_name in self.mailboxes:
             self.imap.create(mailbox_name)
@@ -130,6 +143,9 @@ class Gmail():
 
     def delete_mailbox(self, mailbox_name : str) -> None:
         
+        if not self.imap:
+            raise AuthenticationError("You aren't logged in")
+
         if mailbox_name in self.mailboxes:
             self.imap.delete(mailbox_name)
             self.mailboxes.remove(mailbox_name)
@@ -200,6 +216,10 @@ class Gmail():
 
     def get_mail_ids(self) -> list:
         # Gets a list of all mail ids
+
+        if not self.imap:
+            raise AuthenticationError ("You aren't logged in")
+
         _, LATEST_DATA = self.imap.search(None, "ALL")
 
         MAIL_ID_STR = LATEST_DATA[0] # LATEST DATA is a list
@@ -271,6 +291,9 @@ class Gmail():
     def get_raw(self, MAIL_ID : bytes):
         # Gets the raw email
 
+        if not self.imap:
+            raise AuthenticationError('You aren't logged in')
+
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
         _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)") # Fetches a mail by its id
@@ -282,7 +305,7 @@ class Gmail():
 
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
         
-        _, MAIL_MESSAGE = self.imap.fetch(MAIL_ID, "(RFC822)")
+        MAIL_MESSAGE = self.get_raw(MAIL_ID)
         STR_MESSAGE = MAIL_MESSAGE[0][1].decode()
         MAIL = email.message_from_string(STR_MESSAGE)
 
@@ -396,6 +419,9 @@ class Gmail():
 
     def delete_mail(self, MAIL_ID : bytes) -> None:
         # Delete a specific mail by mail_id
+
+        if not self.imap:
+            raise AuthenticationError ("You aren't logged in")
         
         self.mail_check(MAIL_ID) # Verifies that the mail id is valid
 
@@ -413,8 +439,10 @@ class Gmail():
     def logout(self) -> None:
         # Logout
 
-        self.imap.close()
-        self.imap.logout()
+        if self.imap:
+            self.imap.close()
+            self.imap.logout()
+            self.imap = None
         self.logged_in = False
         self.username = None
         self.password = None
@@ -425,7 +453,7 @@ class Gmail():
         # Sends Gmail with or without attachemnts
 
         if self.username == None or self.password == None:
-            raise AuthenticationError('Log in first')
+            raise AuthenticationError("You aren't logged in")
 
         for PARAM in [RECIPIANT, SUBJECT, MESSAGE]: # Checks that parameters are strings
             if not isinstance(PARAM, str):
