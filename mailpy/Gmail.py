@@ -103,7 +103,7 @@ class Gmail():
     def fetch_mailboxes(self) -> list:
 
         if not self.imap:
-            raise AuthenticationError("You aren't logged in')
+            raise AuthenticationError("You aren't logged in")
 
         response, mailbox_list = self.imap.list()
 
