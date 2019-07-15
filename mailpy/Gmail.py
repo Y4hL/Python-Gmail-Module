@@ -165,7 +165,7 @@ class Gmail():
                 
                 for ATTACHMENT in STATE:
 
-                        if STRING in self.get_attachment_text_from_raw(MAIL_MESSAGE, ATTACHMENT):
+                        if bytes(STRING) in self.get_attachment_text_from_raw(MAIL_MESSAGE, ATTACHMENT):
 
                             FILTERED_MAILS.append(MAIL_ID)
                             break
