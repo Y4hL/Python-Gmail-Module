@@ -303,8 +303,8 @@ class Gmail():
     def get_mail(self, MAIL_ID : bytes) -> dict:
         # Returns dictionary with info about a mail
         
-        MAIL = self.get_mail_from_raw(self.get_raw(MAIL_ID)
-        MAIL["ID"] = MAIL_ID
+        MAIL = self.get_mail_from_raw(self.get_raw(MAIL_ID))
+        MAIL['ID'] = MAIL_ID
 
         return MAIL
 
