@@ -7,7 +7,7 @@ __license__ = 'GNU GPLv3'
 __copyright__ = 'Copyright 2019 Y4hL'
 __doc__ = 'Easily Send and Receive Mails with Python. Conveniently Send and Download Attachements '
 
-from .Gmail import *
+from .mail import *
 
 
 def cli():
