@@ -8,8 +8,3 @@ __copyright__ = 'Copyright 2019 Y4hL'
 __doc__ = 'Easily Send and Receive Mails with Python. Conveniently Send and Download Attachements '
 
 from .mail import *
-
-
-def cli():
-
-    print('CLI for mailpy will be added soon!')
