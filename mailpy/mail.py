@@ -443,7 +443,7 @@ class Gmail():
         return
 
 
-    def send(RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES : list = None) -> None:
+    def send(self, RECIPIANT : str, SUBJECT : str, MESSAGE : str, FILES : list = None) -> None:
         # Sends Gmail with or without attachemnts
 
         if self.username == None or self.password == None:
